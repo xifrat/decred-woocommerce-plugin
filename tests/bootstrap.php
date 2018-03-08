@@ -1,8 +1,6 @@
 <?php
 /**
  * PHPUnit bootstrap file
- *
- * @package Restrict_Content_Pro
  */
 
 $_tests_dir = getenv( 'WP_TESTS_DIR' );
@@ -20,9 +18,10 @@ if ( ! file_exists( $_tests_dir . '/includes/functions.php' ) ) {
 require_once $_tests_dir . '/includes/functions.php';
 
 /**
- * Manually load the plugin being tested.
+ * Manually load the WooCommerce plugin, then the Decred Payments plugin.
  */
 function _manually_load_plugin() {
+	require dirname( dirname( dirname( __FILE__ ) ) ) . '/woocommerce/woocommerce.php';
 	require dirname( dirname( __FILE__ ) ) . '/decred-woocommerce-plugin.php';
 }
 tests_add_filter( 'muplugins_loaded', '_manually_load_plugin' );

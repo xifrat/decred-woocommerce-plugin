@@ -1,18 +1,19 @@
 <?php
 
+namespace Decred\Payments\WooCommerce;
+
 defined( 'ABSPATH' ) || exit;  // prevent direct URL execution
 
 /**
  * Decred Payments
  *
- * @class 		WC_Decred_Payments
- * @extends		WC_Payment_Gateway
- * @version		0.1
- * @package		WooCommerce/Classes/Payment
- * @author 		xifrat
+ * @class       Decred\Payments\WooCommerce\Gateway
+ * @extends     WC_Payment_Gateway
+ * @version     0.1
+ * @author      xifrat
  */
 
-class WC_Decred_Payments extends WC_Payment_Gateway {
+class Gateway extends \WC_Payment_Gateway {
 
 	/**
 	 * Constructor for the gateway.
@@ -47,20 +48,20 @@ class WC_Decred_Payments extends WC_Payment_Gateway {
 	public function init_form_fields() {
 
 		$this->form_fields = array(
-			'enabled' => array(
+			'enabled'      => array(
 				'title'   => __( 'Enable/Disable', 'woocommerce' ),
 				'type'    => 'checkbox',
 				'label'   => __( 'Enable Decred payments ', 'woocommerce' ),
 				'default' => 'no',
 			),
-			'title' => array(
+			'title'        => array(
 				'title'       => __( 'Title', 'woocommerce' ),
 				'type'        => 'text',
 				'description' => __( 'This controls the title which the user sees during checkout.', 'woocommerce' ),
 				'default'     => _x( 'Decred payments', 'Pay with Decred', 'woocommerce' ),
 				'desc_tip'    => true,
 			),
-			'description' => array(
+			'description'  => array(
 				'title'       => __( 'Description', 'woocommerce' ),
 				'type'        => 'textarea',
 				'description' => __( 'Payment method description that the customer will see on your checkout.', 'woocommerce' ),
@@ -91,8 +92,8 @@ class WC_Decred_Payments extends WC_Payment_Gateway {
 	 *
 	 * @access public
 	 * @param WC_Order $order
-	 * @param bool $sent_to_admin
-	 * @param bool $plain_text
+	 * @param bool     $sent_to_admin
+	 * @param bool     $plain_text
 	 */
 	public function email_instructions( $order, $sent_to_admin, $plain_text = false ) {
 		if ( $this->instructions && ! $sent_to_admin && 'decred' === $order->get_payment_method() && $order->has_status( 'on-hold' ) ) {
@@ -125,8 +126,8 @@ class WC_Decred_Payments extends WC_Payment_Gateway {
 
 		// Return thankyou redirect
 		return array(
-			'result' 	=> 'success',
-			'redirect'	=> $this->get_return_url( $order ),
+			'result'   => 'success',
+			'redirect' => $this->get_return_url( $order ),
 		);
 	}
 }

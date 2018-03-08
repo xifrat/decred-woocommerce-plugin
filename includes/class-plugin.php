@@ -1,9 +1,9 @@
 <?php
 /**
  * Decred Payments WooCommerce Plugin
- *
- * @package Decred Payments
  */
+
+namespace Decred\Payments\WooCommerce;
 
 defined( 'ABSPATH' ) || exit;  // prevent direct URL execution.
 
@@ -13,14 +13,14 @@ defined( 'ABSPATH' ) || exit;  // prevent direct URL execution.
  *
  * @author xifrat
  */
-class Decred_WC_Plugin {
+class Plugin {
 
 	/**
 	 * Internal WordPress plugin name
 	 *
 	 * @var string name
 	 */
-	private $name;
+	public $name;
 
 	/**
 	 * Is the plugin operational?
@@ -30,14 +30,14 @@ class Decred_WC_Plugin {
 	 *
 	 * @var boolean operational
 	 */
-	private $operational;
+	public $operational;
 
 	/**
 	 * Logger class, set after plugins loaded.
 	 *
 	 * @var WC_Logger operational
 	 */
-	private $logger;
+	public $logger;
 
 	/**
 	 * Constructor, de facto singleton, but we don't bother enforcing it.
@@ -68,9 +68,9 @@ class Decred_WC_Plugin {
 			return; // missing required WC classes, can't proceed.
 		}
 
-		require_once 'class-wc-decred-payments.php';
+		require_once 'class-gateway.php';
 
-		$this->logger = new WC_Logger();
+		$this->logger = new \WC_Logger();
 
 		$this->operational = true;
 	}
@@ -84,7 +84,7 @@ class Decred_WC_Plugin {
 	 */
 	public function callback_add_payment_method( $methods ) {
 		if ( $this->operational ) {
-			$methods[] = 'WC_Decred_Payments';
+			$methods[] = 'Decred\Payments\WooCommerce\Gateway';
 		}
 		return $methods;
 	}

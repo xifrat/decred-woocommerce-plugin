@@ -10,16 +10,18 @@
  * Text Domain: decred
  * License: ISC
  * License URI: https://github.com/xifrat/decred-woocommerce-plugin/blob/master/LICENSE
- *
- * @package Decred Payments
  */
+
+namespace Decred\Payments\WooCommerce;
 
 defined( 'ABSPATH' ) || exit; // prevent direct URL execution.
 
-include_once 'includes/class-decred-wc-plugin.php';
+global $decred_wc_plugin; // global makes tesing easier.
+
+include_once 'includes/class-plugin.php';
 
 $decred_plugin_name = plugin_basename( __FILE__ );
 
-$decred_wc_plugin = new Decred_WC_Plugin( $decred_plugin_name );
+$decred_wc_plugin = new Plugin( $decred_plugin_name );
 
 $decred_wc_plugin->init();
