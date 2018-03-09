@@ -4,7 +4,47 @@
 
 	<rule ref="WordPress-Core" />
 	<rule ref="WordPress-Docs" />
-
+	
+	<rule ref="Squiz.Commenting">
+		<!-- THIS ONE ADDED -->
+		<exclude name="Squiz.Commenting.FileComment.MissingPackageTag"/>
+		
+		<!-- THESE COPIED FROM wpcs/WordPress-Docs/rules.xml -->
+		<exclude name="Squiz.Commenting.BlockComment.SingleLine"/>
+		<exclude name="Squiz.Commenting.BlockComment.FirstLineIndent"/>
+		<exclude name="Squiz.Commenting.BlockComment.LineIndent"/>
+		<exclude name="Squiz.Commenting.BlockComment.LastLineIndent"/>
+		<exclude name="Squiz.Commenting.BlockComment.WrongStart"/>
+		<exclude name="Squiz.Commenting.BlockComment.NoEmptyLineAfter"/>
+		<exclude name="Squiz.Commenting.ClassComment.TagNotAllowed"/>
+		<exclude name="Squiz.Commenting.ClosingDeclarationComment.Missing"/>
+		<exclude name="Squiz.Commenting.DocCommentAlignment.SpaceAfterStar"/>
+		<exclude name="Squiz.Commenting.FileComment.IncorrectAuthor"/>
+		<exclude name="Squiz.Commenting.FileComment.IncorrectCopyright"/>
+		<exclude name="Squiz.Commenting.FileComment.MissingAuthorTag"/>
+		<exclude name="Squiz.Commenting.FileComment.MissingSubpackageTag"/>
+		<exclude name="Squiz.Commenting.FileComment.MissingCopyrightTag"/>
+		<exclude name="Squiz.Commenting.FileComment.PackageTagOrder"/>
+		<exclude name="Squiz.Commenting.FileComment.SubpackageTagOrder"/>
+		<exclude name="Squiz.Commenting.FileComment.AuthorTagOrder"/>
+		<exclude name="Squiz.Commenting.FileComment.CopyrightTagOrder"/>
+		<exclude name="Squiz.Commenting.FunctionComment.IncorrectParamVarName"/>
+		<exclude name="Squiz.Commenting.FunctionComment.InvalidReturn"/>
+		<exclude name="Squiz.Commenting.FunctionComment.InvalidReturnNotVoid"/>
+		<exclude name="Squiz.Commenting.FunctionComment.MissingReturn"/>
+		<exclude name="Squiz.Commenting.FunctionComment.ParamCommentNotCapital"/>
+		<exclude name="Squiz.Commenting.FunctionComment.SpacingAfterParamName"/>
+		<exclude name="Squiz.Commenting.FunctionComment.TypeHintMissing"/>
+		<exclude name="Squiz.Commenting.InlineComment.DocBlock"/>
+		<exclude name="Squiz.Commenting.InlineComment.NotCapital"/>
+		<exclude name="Squiz.Commenting.LongConditionClosingComment"/>
+		<exclude name="Squiz.Commenting.PostStatementComment"/>
+		<exclude name="Squiz.Commenting.VariableComment.IncorrectVarType"/>
+		<exclude name="Squiz.Commenting.VariableComment.TagNotAllowed"/>
+		<exclude name="Squiz.Commenting.VariableComment.VarOrder"/>
+		<exclude name="Squiz.Commenting.FunctionComment.ScalarTypeHintMissing"/>
+	</rule>
+	
 	<!-- Check all PHP files in directory tree by default. -->
 	<arg name="extensions" value="php"/>
 	<file>.</file>
@@ -14,4 +54,6 @@
 
 	<exclude-pattern>*/node_modules/*</exclude-pattern>
 	<exclude-pattern>*/vendor/*</exclude-pattern>
+	<exclude-pattern>*/wpcs/*</exclude-pattern>
+	<exclude-pattern>*/tests/*</exclude-pattern>
 </ruleset>
