@@ -1,6 +1,6 @@
 <?php
 /**
- * Decred Payments WooCommerce Plugin
+ *  Plugin Intialization
  */
 
 namespace Decred\Payments\WooCommerce;
@@ -9,7 +9,7 @@ defined( 'ABSPATH' ) || exit;  // prevent direct URL execution.
 
 /**
  *
- * Class created mostly to group together plugin configuration code.
+ * Class created mostly to group together plugin initialization code.
  *
  * @author xifrat
  */

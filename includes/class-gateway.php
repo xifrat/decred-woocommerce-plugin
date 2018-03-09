@@ -1,8 +1,11 @@
 <?php
+/**
+ * Payment Gateway class as required by WooCommerce
+ */
 
 namespace Decred\Payments\WooCommerce;
 
-defined( 'ABSPATH' ) || exit;  // prevent direct URL execution
+defined( 'ABSPATH' ) || exit;  // prevent direct URL execution.
 
 /**
  * Decred Payments
@@ -12,7 +15,6 @@ defined( 'ABSPATH' ) || exit;  // prevent direct URL execution
  * @version     0.1
  * @author      xifrat
  */
-
 class Gateway extends \WC_Payment_Gateway {
 
 	/**
@@ -29,16 +31,16 @@ class Gateway extends \WC_Payment_Gateway {
 		$this->init_form_fields();
 		$this->init_settings();
 
-		// Define user set variables
+		// Define user set variables.
 		$this->title        = $this->get_option( 'title' );
 		$this->description  = $this->get_option( 'description' );
 		$this->instructions = $this->get_option( 'instructions' );
 
-		// Actions
+		// Actions.
 		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
 		add_action( 'woocommerce_thankyou_decred', array( $this, 'thankyou_page' ) );
 
-		// Customer Emails
+		// Customer Emails.
 		add_action( 'woocommerce_email_before_order_table', array( $this, 'email_instructions' ), 10, 3 );
 	}
 
@@ -91,9 +93,9 @@ class Gateway extends \WC_Payment_Gateway {
 	 * Add content to the WC emails.
 	 *
 	 * @access public
-	 * @param WC_Order $order
-	 * @param bool     $sent_to_admin
-	 * @param bool     $plain_text
+	 * @param WC_Order $order .
+	 * @param bool     $sent_to_admin .
+	 * @param bool     $plain_text .
 	 */
 	public function email_instructions( $order, $sent_to_admin, $plain_text = false ) {
 		if ( $this->instructions && ! $sent_to_admin && 'decred' === $order->get_payment_method() && $order->has_status( 'on-hold' ) ) {
@@ -104,7 +106,7 @@ class Gateway extends \WC_Payment_Gateway {
 	/**
 	 * Process the payment and return the result.
 	 *
-	 * @param int $order_id
+	 * @param int $order_id .
 	 * @return array
 	 */
 	public function process_payment( $order_id ) {
@@ -112,19 +114,19 @@ class Gateway extends \WC_Payment_Gateway {
 		$order = wc_get_order( $order_id );
 
 		if ( $order->get_total() > 0 ) {
-			// Mark as on-hold (we're awaiting the cheque)
+			// Mark as on-hold (we're awaiting the cheque).
 			$order->update_status( 'on-hold', _x( 'Awaiting Decred payment', 'Pay with Decred', 'woocommerce' ) );
 		} else {
 			$order->payment_complete();
 		}
 
-		// Reduce stock levels
+		// Reduce stock levels.
 		wc_reduce_stock_levels( $order_id );
 
-		// Remove cart
+		// Remove cart.
 		WC()->cart->empty_cart();
 
-		// Return thankyou redirect
+		// Return thankyou redirect.
 		return array(
 			'result'   => 'success',
 			'redirect' => $this->get_return_url( $order ),
