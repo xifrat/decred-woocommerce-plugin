@@ -2,6 +2,9 @@
 
 namespace Decred\Payments\WooCommerce\Test;
 
+include "../includes/class-constant.php";
+use Decred\Payments\WooCommerce\Constant;
+
 class Gateway extends \WP_UnitTestCase {
 
 	function setUp() {
@@ -21,10 +24,12 @@ class Gateway extends \WP_UnitTestCase {
 			$this->assertTrue( isset( $g->$property ) );
 		}
 		
-		$this->assertEquals( $g->id, 'decred' );
-		$this->assertEquals( $g->icon, plugins_url( '/assets/images/decred_logotext.svg', dirname(__FILE__) ) );
+		$this->assertEquals( $g->id, strtolower(Constant::CURRENCY_NAME) );
+		$this->assertEquals( $g->icon, plugins_url( Constant::ICON_PATH, dirname(__FILE__) ) );
 		$this->assertEquals( $g->has_fields, false );
-
+		$this->assertEquals( $g->method_title, Constant::CURRENCY_NAME );
+		$this->assertEquals( $g->method_description, 'Allows direct payments with the Decred cryptocurrency.' );
+		//$this->assertEquals( $g->title, $g->method_title );
 	}
 
 }
