@@ -2,7 +2,7 @@
 
 namespace Decred\Payments\WooCommerce\Test;
 
-include "../includes/class-constant.php";
+require_once dirname(__DIR__) . "/includes/class-constant.php";
 use Decred\Payments\WooCommerce\Constant;
 
 class Gateway extends \WP_UnitTestCase {

@@ -20,8 +20,6 @@ global $decred_wc_plugin; // global makes tesing easier.
 
 include_once 'includes/class-plugin.php';
 
-$decred_plugin_name = plugin_basename( __FILE__ );
-
-$decred_wc_plugin = new Plugin( $decred_plugin_name );
+$decred_wc_plugin = new Plugin( __FILE__ );
 
 $decred_wc_plugin->init();

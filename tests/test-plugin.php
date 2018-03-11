@@ -2,6 +2,9 @@
 
 namespace Decred\Payments\WooCommerce\Test;
 
+require_once dirname(__DIR__) . "/includes/class-constant.php";
+use Decred\Payments\WooCommerce\Constant;
+
 class Plugin extends \WP_UnitTestCase {
 
 	function test_global_decred_wc_plugin() {
@@ -39,5 +42,12 @@ class Plugin extends \WP_UnitTestCase {
 		$this->assertTrue( count( $links ) == 2 );
 		$this->assertContains( 'Settings', $links[0] );
 		$this->assertContains( 'Logs', $links[1] );
+	}
+	
+	function test_plugin_headers() {
+		global $decred_wc_plugin;
+		$plugin_data = get_plugin_data( $decred_wc_plugin->file );
+		
+		$this->assertEquals( Constant::TEXT_DOMAIN, $plugin_data['TextDomain'] );
 	}
 }

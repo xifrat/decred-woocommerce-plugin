@@ -16,6 +16,14 @@ defined( 'ABSPATH' ) || exit;  // prevent direct URL execution.
 class Plugin {
 
 	/**
+	 * Absolute path to the plugin loading file
+	 *
+	 * @var string file
+	 */
+	public $file;
+
+
+	/**
 	 * Internal WordPress plugin name
 	 *
 	 * @var string name
@@ -42,10 +50,11 @@ class Plugin {
 	/**
 	 * Constructor, de facto singleton, but we don't bother enforcing it.
 	 *
-	 * @param string $name Internal WordPress plugin name.
+	 * @param string $file plugin file path.
 	 */
-	public function __construct( $name ) {
-		$this->name        = $name;
+	public function __construct( $file ) {
+		$this->file        = $file;
+		$this->name        = plugin_basename( $file );
 		$this->operational = false;
 	}
 

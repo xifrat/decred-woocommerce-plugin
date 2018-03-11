@@ -17,7 +17,8 @@ class Constant {
 
 	const CURRENCY_ID = 'decred';
 	const CURRENCY_NAME = 'Decred';
+	const TEXT_DOMAIN = 'decred';
+	
 	const ICON_PATH = '/assets/images/decred_logotext.svg';
-	const TEXT_DOMAIN = 'decred'; // note this must match plugin definition comments
 	
 }
