@@ -22,10 +22,10 @@ class Gateway extends \WC_Payment_Gateway {
 	 */
 	public function __construct() {
 		$this->id                 = 'decred';
-		$this->icon               = apply_filters( 'woocommerce_cheque_icon', '' );
+		$this->icon               = plugins_url( '/assets/images/decred_logotext.svg', dirname(__FILE__) );
 		$this->has_fields         = false;
 		$this->method_title       = _x( 'Decred', 'Pay with Decred', 'woocommerce' );
-		$this->method_description = __( 'Allows direct payments with the Decred cryptocurrency. DDD ', 'woocommerce' );
+		$this->method_description = __( 'Allows direct payments with the Decred cryptocurrency. ', 'woocommerce' );
 
 		// Load the settings.
 		$this->init_form_fields();

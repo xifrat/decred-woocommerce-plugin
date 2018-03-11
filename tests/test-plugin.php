@@ -10,7 +10,7 @@ class Plugin extends \WP_UnitTestCase {
 		$this->assertEquals( get_class( $decred_wc_plugin ), 'Decred\Payments\WooCommerce\Plugin' );
 	}
 
-	function test_class_exists_wc_decred_payments() {
+	function test_class_exists_gateway() {
 		$this->assertTrue( class_exists( 'Decred\Payments\WooCommerce\Gateway' ) );
 	}
 
