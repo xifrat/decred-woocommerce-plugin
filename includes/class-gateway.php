@@ -30,20 +30,15 @@ class Gateway extends \WC_Payment_Gateway {
 		$this->method_title       = Constant::CURRENCY_NAME;
 		$this->method_description = Util::translate( 'Allows direct payments with the Decred cryptocurrency.' );
 
-		// Load the settings.
 		$this->init_form_fields();
+		
 		$this->init_settings();
+		$this->title        = $this->settings[ 'title' ];
+		$this->description  = $this->settings[ 'description' ];
+		$this->instructions = $this->settings[ 'instructions' ];
 
-		// Define user set variables.
-		$this->title        = $this->get_option( 'title' );
-		$this->description  = $this->get_option( 'description' );
-		$this->instructions = $this->get_option( 'instructions' );
-
-		// Actions.
 		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
-		add_action( 'woocommerce_thankyou_decred', array( $this, 'thankyou_page' ) );
-
-		// Customer Emails.
+		add_action( 'woocommerce_thankyou_' . $this->id, array( $this, 'thankyou_page' ) );
 		add_action( 'woocommerce_email_before_order_table', array( $this, 'email_instructions' ), 10, 3 );
 	}
 
