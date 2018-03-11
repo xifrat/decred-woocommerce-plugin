@@ -24,7 +24,7 @@ class Gateway extends \WP_UnitTestCase {
 			$this->assertTrue( isset( $g->$property ) );
 		}
 		
-		$this->assertEquals( $g->id, strtolower(Constant::CURRENCY_NAME) );
+		$this->assertEquals( $g->id, Constant::CURRENCY_ID );
 		$this->assertEquals( $g->icon, plugins_url( Constant::ICON_PATH, dirname(__FILE__) ) );
 		$this->assertEquals( $g->has_fields, false );
 		$this->assertEquals( $g->method_title, Constant::CURRENCY_NAME );

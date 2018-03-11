@@ -23,7 +23,7 @@ class Gateway extends \WC_Payment_Gateway {
 	 * Constructor for the gateway.
 	 */
 	public function __construct() {
-		$this->id                 = strtolower(Constant::CURRENCY_NAME);
+		$this->id                 = Constant::CURRENCY_ID;
 		$this->icon               = plugins_url( Constant::ICON_PATH, dirname(__FILE__) );
 		$this->has_fields         = false;
 		$this->method_title       = Constant::CURRENCY_NAME;

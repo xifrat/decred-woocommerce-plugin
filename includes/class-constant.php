@@ -15,6 +15,7 @@ defined( 'ABSPATH' ) || exit;  // prevent direct URL execution.
  */
 class Constant {
 
+	const CURRENCY_ID = 'decred';
 	const CURRENCY_NAME = 'Decred';
 	const ICON_PATH = '/assets/images/decred_logotext.svg';
 	const TEXT_DOMAIN = 'decred'; // note this must match plugin definition comments
