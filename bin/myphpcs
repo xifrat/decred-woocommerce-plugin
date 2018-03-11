@@ -1,0 +1,5 @@
+clear
+wpcs/vendor/bin/phpcs | \
+   grep -v WordPress.WP.I18n.LowLevelTranslationFunction | \
+   grep -v "not \"Constant::" | \
+   grep -v "not \"$text"

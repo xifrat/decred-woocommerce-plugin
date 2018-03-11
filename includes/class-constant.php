@@ -15,10 +15,10 @@ defined( 'ABSPATH' ) || exit;  // prevent direct URL execution.
  */
 class Constant {
 
-	const CURRENCY_ID = 'decred';
+	const CURRENCY_ID   = 'decred';
 	const CURRENCY_NAME = 'Decred';
-	const TEXT_DOMAIN = 'decred';
-	
+	const TEXT_DOMAIN   = 'decred';
+
 	const ICON_PATH = '/assets/images/decred_logotext.svg';
-	
+
 }

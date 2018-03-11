@@ -7,7 +7,8 @@ namespace Decred\Payments\WooCommerce;
 
 defined( 'ABSPATH' ) || exit;  // prevent direct URL execution.
 
-include 'class-constant.php';
+require_once 'class-constant.php';
+require_once 'class-util.php';
 
 /**
  * Decred Payments
@@ -24,10 +25,10 @@ class Gateway extends \WC_Payment_Gateway {
 	 */
 	public function __construct() {
 		$this->id                 = Constant::CURRENCY_ID;
-		$this->icon               = plugins_url( Constant::ICON_PATH, dirname(__FILE__) );
+		$this->icon               = plugins_url( Constant::ICON_PATH, dirname( __FILE__ ) );
 		$this->has_fields         = false;
 		$this->method_title       = Constant::CURRENCY_NAME;
-		$this->method_description = __( 'Allows direct payments with the Decred cryptocurrency.', Constant::TEXT_DOMAIN );
+		$this->method_description = Util::translate( 'Allows direct payments with the Decred cryptocurrency.' );
 
 		// Load the settings.
 		$this->init_form_fields();
@@ -53,29 +54,29 @@ class Gateway extends \WC_Payment_Gateway {
 
 		$this->form_fields = array(
 			'enabled'      => array(
-				'title'   => __( 'Enable/Disable', Constant::TEXT_DOMAIN ),
+				'title'   => Util::translate( 'Enable/Disable' ),
 				'type'    => 'checkbox',
-				'label'   => __( 'Enable Decred payments ', Constant::TEXT_DOMAIN ),
+				'label'   => Util::translate( 'Enable Decred payments ' ),
 				'default' => 'no',
 			),
 			'title'        => array(
-				'title'       => __( 'Title', Constant::TEXT_DOMAIN ),
+				'title'       => Util::translate( 'Title' ),
 				'type'        => 'text',
-				'description' => __( 'This controls the title which the user sees during checkout.', Constant::TEXT_DOMAIN ),
-				'default'     => _x( 'Decred payments', 'Pay with Decred', Constant::TEXT_DOMAIN ),
+				'description' => Util::translate( 'This controls the title which the user sees during checkout.' ),
+				'default'     => Util::translate( 'Decred payments' ),
 				'desc_tip'    => true,
 			),
 			'description'  => array(
-				'title'       => __( 'Description', Constant::TEXT_DOMAIN ),
+				'title'       => Util::translate( 'Description' ),
 				'type'        => 'textarea',
-				'description' => __( 'Payment method description that the customer will see on your checkout.', Constant::TEXT_DOMAIN ),
-				'default'     => __( 'Please send some specific Decred amount to the address we provide here.', Constant::TEXT_DOMAIN ),
+				'description' => Util::translate( 'Payment method description that the customer will see on your checkout.' ),
+				'default'     => Util::translate( 'Please send some specific Decred amount to the address we provide here.' ),
 				'desc_tip'    => true,
 			),
 			'instructions' => array(
-				'title'       => __( 'Instructions', Constant::TEXT_DOMAIN ),
+				'title'       => Util::translate( 'Instructions' ),
 				'type'        => 'textarea',
-				'description' => __( 'Instructions that will be added to the thank you page and emails.', Constant::TEXT_DOMAIN ),
+				'description' => Util::translate( 'Instructions that will be added to the thank you page and emails.' ),
 				'default'     => '',
 				'desc_tip'    => true,
 			),
@@ -117,7 +118,7 @@ class Gateway extends \WC_Payment_Gateway {
 
 		if ( $order->get_total() > 0 ) {
 			// Mark as on-hold (we're awaiting the cheque).
-			$order->update_status( 'on-hold', _x( 'Awaiting Decred payment', 'Pay with Decred', Constant::TEXT_DOMAIN ) );
+			$order->update_status( 'on-hold', Util::translate( 'Awaiting Decred payment' ) );
 		} else {
 			$order->payment_complete();
 		}
