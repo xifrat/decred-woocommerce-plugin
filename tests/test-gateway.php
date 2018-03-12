@@ -32,6 +32,7 @@ class Gateway extends \WP_UnitTestCase {
 		$this->assertEquals( $g->has_fields, false );
 		$this->assertEquals( $g->method_title, Constant::CURRENCY_NAME );
 		$this->assertEquals( $g->method_description, 'Allows direct payments with the Decred cryptocurrency.' );
+		$this->assertEquals( $g->order_button_text, 'Pay with Decred' );
 		
 		/**
 		 * Form fields

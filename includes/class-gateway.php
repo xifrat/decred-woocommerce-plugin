@@ -29,13 +29,14 @@ class Gateway extends \WC_Payment_Gateway {
 		$this->has_fields         = false;
 		$this->method_title       = Constant::CURRENCY_NAME;
 		$this->method_description = Util::translate( 'Allows direct payments with the Decred cryptocurrency.' );
+		$this->order_button_text  = Util::translate( 'Pay with Decred' );
 
 		$this->init_form_fields();
 		
 		$this->init_settings();
-		$this->title        = $this->settings[ 'title' ];
-		$this->description  = $this->settings[ 'description' ];
-		$this->instructions = $this->settings[ 'instructions' ];
+		$this->title        = $this->settings['title'];
+		$this->description  = $this->settings['description'];
+		$this->instructions = $this->settings['instructions'];
 
 		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
 		add_action( 'woocommerce_thankyou_' . $this->id, array( $this, 'thankyou_page' ) );
@@ -51,14 +52,14 @@ class Gateway extends \WC_Payment_Gateway {
 			'enabled'      => array(
 				'title'   => Util::translate( 'Enable/Disable' ),
 				'type'    => 'checkbox',
-				'label'   => Util::translate( 'Enable Decred payments ' ),
+				'label'   => Util::translate( 'Enable Decred direct payments' ),
 				'default' => 'no',
 			),
 			'title'        => array(
 				'title'       => Util::translate( 'Title' ),
 				'type'        => 'text',
 				'description' => Util::translate( 'This controls the title which the user sees during checkout.' ),
-				'default'     => Util::translate( 'Decred payments' ),
+				'default'     => Constant::CURRENCY_NAME,
 				'desc_tip'    => true,
 			),
 			'description'  => array(
