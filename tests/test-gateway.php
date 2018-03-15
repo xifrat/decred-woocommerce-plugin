@@ -53,6 +53,7 @@ class Gateway extends \WP_UnitTestCase {
 		$this->assertEquals( $g->title, $g->get_option( 'title' ) );
 		$this->assertEquals( $g->description, $g->get_option( 'description' ) );
 		$this->assertEquals( $g->instructions, $g->get_option( 'instructions' ) );
+		// TODO add enqueue_assets() tests
 		
 		/**
 		 * Actions

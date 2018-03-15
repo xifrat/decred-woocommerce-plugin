@@ -20,5 +20,7 @@ class Constant {
 	const TEXT_DOMAIN   = 'decred';
 
 	const ICON_PATH = '/assets/images/decred_logotext.svg';
+	// TODO JS features pending // const JS_PATHS = array( '/assets/require.js', '/assets/decred-method.js' ); 
+	const STYLES_PATH = '/assets/styles.css';
 
 }

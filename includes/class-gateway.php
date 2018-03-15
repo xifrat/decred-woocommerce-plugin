@@ -24,9 +24,10 @@ class Gateway extends \WC_Payment_Gateway {
 	 * Constructor for the gateway.
 	 */
 	public function __construct() {
+		$this->plugin             = $GLOBALS['decred_wc_plugin']; // dependency injection kindof
 		$this->id                 = Constant::CURRENCY_ID;
-		$this->icon               = plugins_url( Constant::ICON_PATH, dirname( __FILE__ ) );
-		$this->has_fields         = false;
+		$this->icon               = plugins_url( Constant::ICON_PATH, $this->plugin->name );
+		$this->has_fields         = true;
 		$this->method_title       = Constant::CURRENCY_NAME;
 		$this->method_description = Util::translate( 'Allows direct payments with the Decred cryptocurrency.' );
 		$this->order_button_text  = Util::translate( 'Pay with Decred' );
@@ -41,6 +42,7 @@ class Gateway extends \WC_Payment_Gateway {
 		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
 		add_action( 'woocommerce_thankyou_' . $this->id, array( $this, 'thankyou_page' ) );
 		add_action( 'woocommerce_email_before_order_table', array( $this, 'email_instructions' ), 10, 3 );
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_assets' ) );
 	}
 
 	/**
@@ -78,7 +80,34 @@ class Gateway extends \WC_Payment_Gateway {
 			),
 		);
 	}
+	
+	public function enqueue_assets() {
+		
+		$i = 1;
+		$handle = 'decred-';
+		
+		/* TODO implement JS features
+		foreach( Constant::JS_PATHS as $js_path ) {
+			$src = plugins_url( $js_path, $this->plugin->name );
+			wp_enqueue_script( $handle . $i, $src );
+			$i++;
+		}
+		*/
 
+		$src = plugins_url( Constant::STYLES_PATH, $this->plugin->name );
+		wp_enqueue_style( $handle . $i, $src );
+	}
+	
+	/**
+	 * HTML form with payment fields
+	 */
+	public function payment_fields() {
+		
+		$dcr_amount = 3.4507890; // TODO get amount from order, convert to DCR
+		
+		require_once 'form-checkout.php';
+	}	
+	
 	/**
 	 * Output for the order received page.
 	 */
@@ -86,6 +115,7 @@ class Gateway extends \WC_Payment_Gateway {
 		if ( $this->instructions ) {
 			echo wpautop( wptexturize( $this->instructions ) );
 		}
+		require_once 'html-thankyou.php';	
 	}
 
 	/**
