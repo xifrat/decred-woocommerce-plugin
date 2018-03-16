@@ -17,7 +17,6 @@ class Constant {
 
 	const CURRENCY_ID   = 'decred';
 	const CURRENCY_NAME = 'Decred';
-	const TEXT_DOMAIN   = 'decred';
 
 	const ICON_PATH = '/assets/images/decred_logotext.svg';
 	// TODO JS features pending // const JS_PATHS = array( '/assets/require.js', '/assets/decred-method.js' ); 
