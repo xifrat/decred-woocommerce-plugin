@@ -77,6 +77,18 @@ class Gateway extends \WC_Payment_Gateway {
 				'default'     => '',
 				'desc_tip'    => true,
 			),
+			'show_refund_address' => array(
+				'title'   => __( 'Show/Hide', 'decred' ),
+				'type'    => 'checkbox',
+				'label'   => __( 'Show refund address at checkout', 'decred' ),
+				'default' => 'yes',
+			),
+			'refund_address_optional' => array(
+				'title'   => __( 'Optional/Required', 'decred' ),
+				'type'    => 'checkbox',
+				'label'   => __( 'Refund address at checkout is optional (if shown)', 'decred' ),
+				'default' => 'yes',
+			),
 		);
 	}
 	
@@ -103,6 +115,8 @@ class Gateway extends \WC_Payment_Gateway {
 	public function payment_fields() {
 		
 		$dcr_amount = 3.4507890; // TODO get amount from order, convert to DCR
+		$show_refund_address = $this->get_option( 'show_refund_address', 'no' ) == 'yes';
+		$require_refund_address = $this->get_option( 'refund_address_optional', 'yes' ) == 'no';
 		
 		require_once 'form-checkout.php';
 	}	

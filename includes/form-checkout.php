@@ -9,19 +9,41 @@ $amount_big = floor($dcr_amount*100)/100;
 $amount_small = sprintf('%01.7f', round($dcr_amount - $amount_big, 7));
 $amount_small = substr( $amount_small, 4, 5 );
 
-?>	
-<div class="payment_box payment_method_decred" style=""></p>
-
-	<span style="text-align:center"><?= __('Amount to pay:','decred') ?></span>
+?>
 		
-	<span class="decred-label"  style="text-align:center">
-		<span class="decred-price">
-			<span class="decred-amount decred-amount__big" data-bind="text: displayDecredAmountBig"><?= $amount_big ?></span><span class="decred-amount decred-amount__small"><span data-bind="text: displayDecredAmountSmall"><?= $amount_small ?>&nbsp;DCR</span></span>
+	<span class="decred-label">
+		<span><?= __('Amount to pay:','decred') ?>&nbsp;</span>
+		<span class="decred-price" style="color: black;">
+			<span class="decred-amount decred-amount__big" data-bind="text: displayDecredAmountBig"><?= $amount_big ?><span class="decred-amount decred-amount__small" data-bind="text: displayDecredAmountSmall"><?= $amount_small ?>&nbsp;</span>DCR</span>
 		</span>
 	</span>
-	
-	
 <?php 
+if ( $show_refund_address ) {
+?>
+	<div class="checkout-decred-price">
+		<dl class="decred-refund-address-wrapper">
+			<dt><label for="decred-refund-address">
+			<br><?= __( 'Decred address for refunds', 'decred' ) ?>
+			<?php if ( $require_refund_address ) { ?><span class="required">*</span><?php } ?>
+			</label></dt>
+				<dd>
+					<input id="decred-refund-address" name="refund_address"
+						class="input-text" style="width: 100%;"
+						<?php /* data-bind="attr: {required: !isRefundAddressOptional()}" TODO implement JS required validation */ ?> 
+						autocomplete="off" autocorrect="no" autocapitalize="no" spellcheck="no"
+						required="true" type="text">
+						
+					<?php /*	  TODO implement JS required validation 
+					<div id="decred-refund-address-error" class="decred-error-wrapper">
+						<span class="decred-error"><?= __('Please enter a valid Decred address','decred') ?></span>
+					</div>
+					*/ ?>
+				</dd>
+		</dl>
+	</div>	
+<?php
+}
+
 /* TODO implement refund address...
 		
 	<fieldset id="wc-decred-crypto-form" class="wc-credit-card-form wc-payment-form">
@@ -59,6 +81,3 @@ $amount_small = substr( $amount_small, 4, 5 );
 	</fieldset>
 */ 
 ?>
-	
-</div>
-
