@@ -92,6 +92,14 @@ class Gateway extends \WC_Payment_Gateway {
 		);
 	}
 	
+	public function show_refund_address() {
+		return $this->get_option( 'show_refund_address', 'no' ) == 'yes';
+	}
+	
+	public function require_refund_address() {
+		return $this->show_refund_address() && $this->get_option( 'refund_address_optional', 'yes' ) == 'no';
+	}
+	
 	public function enqueue_assets() {
 		
 		$i = 1;
@@ -115,11 +123,47 @@ class Gateway extends \WC_Payment_Gateway {
 	public function payment_fields() {
 		
 		$dcr_amount = 3.4507890; // TODO get amount from order, convert to DCR
-		$show_refund_address = $this->get_option( 'show_refund_address', 'no' ) == 'yes';
-		$require_refund_address = $this->get_option( 'refund_address_optional', 'yes' ) == 'no';
 		
 		require_once 'form-checkout.php';
-	}	
+	}
+	
+	
+	/**
+	 * Safely get post data if set
+	 *
+	 * @param string $name name of post argument to get
+	 * @return mixed post data, or null
+	 */
+	private function get_post( $name ) {
+		if ( isset( $_POST[ $name ] ) ) {
+			return trim( $_POST[ $name ] );
+		}
+		return null;
+	}
+	
+	/**
+	 * Validate HTML form fields
+	 */
+	public function validate_fields() {
+		$address = $this->get_post( 'decred-refund-address' );
+		
+		// empty address OK if optional, otherwise validate it.
+		if ( empty( $address ) && ! $this->require_refund_address() ) {
+			$address_is_valid = true;
+		} else {
+			$address_is_valid = $this->validate_refund_address($address);
+		}
+		
+		if ( ! $address_is_valid ) {
+			wc_add_notice( __( 'Please enter a valid Decred refund address.', 'decred' ), 'error' );
+		}
+		return $address_is_valid;
+	}
+	
+	public function validate_refund_address( $address ) {
+		// TODO fully verify it's a valid DCR address.
+		return strlen( $address ) == 35;
+	}
 	
 	/**
 	 * Output for the order received page.
