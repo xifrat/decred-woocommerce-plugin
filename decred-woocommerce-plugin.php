@@ -16,7 +16,7 @@ namespace Decred\Payments\WooCommerce;
 
 defined( 'ABSPATH' ) || exit; // prevent direct URL execution.
 
-global $decred_wc_plugin; // global makes tesing easier.
+global $decred_wc_plugin; // global makes testing easier.
 
 include_once 'includes/class-plugin.php';
 

@@ -5,13 +5,13 @@ namespace Decred\Payments\WooCommerce\Test;
 require_once dirname(__DIR__) . "/includes/class-constant.php";
 use Decred\Payments\WooCommerce\Constant;
 
-class Gateway extends \WP_UnitTestCase {
+class Gateway_Constructor extends \WP_UnitTestCase {
 
-	function setUp() {
+	public function setUp() {
 		$this->gateway = new \Decred\Payments\WooCommerce\Gateway;
 	}
 
-	function test_constructor() {
+	public function test_constructor() {
 		$g = $this->gateway;
 
 		/**
@@ -29,7 +29,7 @@ class Gateway extends \WP_UnitTestCase {
 		
 		$this->assertEquals( $g->id, Constant::CURRENCY_ID );
 		$this->assertEquals( $g->icon, plugins_url( Constant::ICON_PATH, dirname(__FILE__) ) );
-		$this->assertEquals( $g->has_fields, false );
+		$this->assertEquals( $g->has_fields, true );
 		$this->assertEquals( $g->method_title, Constant::CURRENCY_NAME );
 		$this->assertEquals( $g->method_description, 'Allows direct payments with the Decred cryptocurrency.' );
 		$this->assertEquals( $g->order_button_text, 'Pay with Decred' );
@@ -38,7 +38,7 @@ class Gateway extends \WP_UnitTestCase {
 		 * Form fields
 		 */
 		// setup form should have these fields
-		$form_field_names = array( 'enabled', 'title', 'description', 'instructions' );
+		$form_field_names = array( 'enabled', 'title', 'description', 'instructions', 'show_refund_address', 'refund_address_optional' );
 		$num_fields = count($form_field_names);
 		$this->assertCount( $num_fields, $g->form_fields );
 
@@ -53,7 +53,7 @@ class Gateway extends \WP_UnitTestCase {
 		$this->assertEquals( $g->title, $g->get_option( 'title' ) );
 		$this->assertEquals( $g->description, $g->get_option( 'description' ) );
 		$this->assertEquals( $g->instructions, $g->get_option( 'instructions' ) );
-		// TODO add enqueue_assets() tests
+
 		
 		/**
 		 * Actions
@@ -66,17 +66,18 @@ class Gateway extends \WP_UnitTestCase {
 		$actions = array(
 			'woocommerce_update_options_payment_gateways_' . $g->id,
 			'woocommerce_thankyou_' . $g->id,
-			'woocommerce_email_before_order_table'
+			'woocommerce_email_before_order_table',
+			'wp_enqueue_scripts'
 		);
 		
 		foreach ( $actions as $action ) {
 			// actions get saved in $wp_filter as WP_Hook objects
 			$this->assertArrayHasKey( $action, $wp_filter );
 			$this->assertEquals( 'WP_Hook', get_class($wp_filter[$action]) );
-			
 			// verify hook's class & method
 			$arr = array_shift($wp_filter[$action]->callbacks);
-			$arr = array_shift($arr);
+			//echo "*** "; print_r(array_keys($arr));
+			$arr = array_pop($arr); // we check the last callback;
 			$arr = array_shift($arr);
 			$this->assertEquals( get_class($g), get_class($arr[0]) );
 			$this->assertTrue(

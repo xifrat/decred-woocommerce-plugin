@@ -13,7 +13,7 @@ class Plugin extends \WP_UnitTestCase {
 		$this->assertEquals( get_class( $decred_wc_plugin ), 'Decred\Payments\WooCommerce\Plugin' );
 	}
 
-	function test_class_exists_gateway() {
+	function test_gateway_class_exists() {
 		$this->assertTrue( class_exists( 'Decred\Payments\WooCommerce\Gateway' ) );
 	}
 
@@ -44,10 +44,10 @@ class Plugin extends \WP_UnitTestCase {
 		$this->assertContains( 'Logs', $links[1] );
 	}
 	
-	function test_plugin_headers() {
+	function test_plugin_headers_ok() {
 		global $decred_wc_plugin;
 		$plugin_data = get_plugin_data( $decred_wc_plugin->file );
 		
-		$this->assertEquals( Constant::TEXT_DOMAIN, $plugin_data['TextDomain'] );
+		$this->assertEquals( 'decred', $plugin_data['TextDomain'] );
 	}
 }

@@ -23,7 +23,7 @@ class Gateway extends \WC_Payment_Gateway {
 	 * Constructor for the gateway.
 	 */
 	public function __construct() {
-		$this->plugin             = $GLOBALS['decred_wc_plugin']; // dependency injection kindof
+		$this->plugin             = $GLOBALS['decred_wc_plugin']; // dependency injection kind of.
 		$this->id                 = Constant::CURRENCY_ID;
 		$this->icon               = plugins_url( Constant::ICON_PATH, $this->plugin->name );
 		$this->has_fields         = true;
@@ -32,7 +32,7 @@ class Gateway extends \WC_Payment_Gateway {
 		$this->order_button_text  = __( 'Pay with Decred', 'decred' );
 
 		$this->init_form_fields();
-		
+
 		$this->init_settings();
 		$this->title        = $this->settings['title'];
 		$this->description  = $this->settings['description'];
@@ -50,34 +50,34 @@ class Gateway extends \WC_Payment_Gateway {
 	public function init_form_fields() {
 
 		$this->form_fields = array(
-			'enabled'      => array(
+			'enabled'                 => array(
 				'title'   => __( 'Enable/Disable', 'decred' ),
 				'type'    => 'checkbox',
 				'label'   => __( 'Enable Decred direct payments', 'decred' ),
 				'default' => 'no',
 			),
-			'title'        => array(
+			'title'                   => array(
 				'title'       => __( 'Title', 'decred' ),
 				'type'        => 'text',
 				'description' => __( 'This controls the title which the user sees during checkout.', 'decred' ),
 				'default'     => Constant::CURRENCY_NAME,
 				'desc_tip'    => true,
 			),
-			'description'  => array(
+			'description'             => array(
 				'title'       => __( 'Description', 'decred' ),
 				'type'        => 'textarea',
 				'description' => __( 'Payment method description that the customer will see on your checkout.', 'decred' ),
 				'default'     => __( 'Please send some specific Decred amount to the address we provide here.', 'decred' ),
 				'desc_tip'    => true,
 			),
-			'instructions' => array(
+			'instructions'            => array(
 				'title'       => __( 'Instructions', 'decred' ),
 				'type'        => 'textarea',
 				'description' => __( 'Instructions that will be added to the thank you page and emails.', 'decred' ),
 				'default'     => '',
 				'desc_tip'    => true,
 			),
-			'show_refund_address' => array(
+			'show_refund_address'     => array(
 				'title'   => __( 'Show/Hide', 'decred' ),
 				'type'    => 'checkbox',
 				'label'   => __( 'Show refund address at checkout', 'decred' ),
@@ -91,21 +91,32 @@ class Gateway extends \WC_Payment_Gateway {
 			),
 		);
 	}
-	
+
+	/**
+	 * Show refund address in checkout page?
+	 */
 	public function show_refund_address() {
 		return $this->get_option( 'show_refund_address', 'no' ) == 'yes';
 	}
-	
+
+	/**
+	 * Make the refund address a required field?
+	 */
 	public function require_refund_address() {
 		return $this->show_refund_address() && $this->get_option( 'refund_address_optional', 'yes' ) == 'no';
 	}
-	
+
+	/**
+	 * Tell WP to include links for required assets in the HTML <head>
+	 */
 	public function enqueue_assets() {
-		
-		$i = 1;
+
+		$i      = 1;
 		$handle = 'decred-';
-		
-		/* TODO implement JS features
+
+		/*
+		 * TODO implement JS features
+		 *
 		foreach( Constant::JS_PATHS as $js_path ) {
 			$src = plugins_url( $js_path, $this->plugin->name );
 			wp_enqueue_script( $handle . $i, $src );
@@ -116,23 +127,23 @@ class Gateway extends \WC_Payment_Gateway {
 		$src = plugins_url( Constant::STYLES_PATH, $this->plugin->name );
 		wp_enqueue_style( $handle . $i, $src );
 	}
-	
+
 	/**
 	 * HTML form with payment fields
 	 */
 	public function payment_fields() {
-		
-		$dcr_amount = 3.4507890; // TODO get amount from order, convert to DCR
-		
-		require_once 'form-checkout.php';
+
+		$dcr_amount = 3.4507890; // TODO get amount from order, convert to DCR.
+
+		require 'form-checkout.php';
 	}
-	
-	
+
+
 	/**
 	 * Safely get post data if set
 	 *
-	 * @param string $name name of post argument to get
-	 * @return mixed post data, or null
+	 * @param string $name name of post argument to get.
+	 * @return mixed post data, or null.
 	 */
 	private function get_post( $name ) {
 		if ( isset( $_POST[ $name ] ) ) {
@@ -140,31 +151,43 @@ class Gateway extends \WC_Payment_Gateway {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Validate HTML form fields
 	 */
 	public function validate_fields() {
 		$address = $this->get_post( 'decred-refund-address' );
-		
+
+		// this should never happen as the refund address field should be missing.
+		if ( ! empty( $address ) && ! $this->show_refund_address() ) {
+			wc_add_notice( __( 'Decred plugin error: unexpected refund address.', 'decred' ), 'error' );
+			return false;
+		}
+
 		// empty address OK if optional, otherwise validate it.
 		if ( empty( $address ) && ! $this->require_refund_address() ) {
 			$address_is_valid = true;
 		} else {
-			$address_is_valid = $this->validate_refund_address($address);
+			$address_is_valid = $this->validate_refund_address( $address );
 		}
-		
+
 		if ( ! $address_is_valid ) {
-			wc_add_notice( __( 'Please enter a valid Decred refund address.', 'decred' ), 'error' );
+			wc_add_notice( __( 'Please enter a valid Decred address for refunds.', 'decred' ), 'error' );
 		}
 		return $address_is_valid;
 	}
-	
+
+	/**
+	 *
+	 * Verify if the refund address is a valid Decred one. TODO implement fully.
+	 *
+	 * @param string $address Decred refund address.
+	 * @return boolean
+	 */
 	public function validate_refund_address( $address ) {
-		// TODO fully verify it's a valid DCR address.
 		return strlen( $address ) == 35;
 	}
-	
+
 	/**
 	 * Output for the order received page.
 	 */
@@ -172,7 +195,7 @@ class Gateway extends \WC_Payment_Gateway {
 		if ( $this->instructions ) {
 			echo wpautop( wptexturize( $this->instructions ) );
 		}
-		require_once 'html-thankyou.php';	
+		require 'html-thankyou.php';
 	}
 
 	/**
