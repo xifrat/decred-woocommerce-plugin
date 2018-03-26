@@ -1,4 +1,4 @@
-/* taken from decred-magento-plugin */
+/* taken from decred-magento-plugin TODO cleanup */
 @import url("https://fonts.googleapis.com/css?family=Inconsolata");
 @import url("https://fonts.googleapis.com/css?family=Source+Sans+Pro");
 .decred-icon_copy {
@@ -8,6 +8,7 @@
   height: 16px; }
 
 .decred-price {
+  color: #000000;
   font-family: "Inconsolata", monospace;
   font-size: 0; }
   .decred-price .decred-amount__big {
@@ -23,13 +24,13 @@
   max-width: 960px;
   width: 100%;
   background-color: #ffffff;
-  margin-bottom: 20px; }
+  margin-bottom: 40px; }
   .decred-pay .decred-pay-header {
     height: 100px; }
     .decred-pay .decred-pay-header img {
       margin: 36px 0 36px 35px; }
   .decred-pay .decred-pay-content {
-    padding: 0 35px 35px 35px; }
+    padding: 0; }
     .decred-pay .decred-pay-content::after {
       content: "";
       display: table;
@@ -71,14 +72,21 @@
       display: inline-block;
       margin: -4px 8px 0 0; }
   .decred-pay .decred-pay-row label {
-    color: #0c1e3e;
+    color: #596d81;
     display: block;
     margin-bottom: 6px;
+    font-size: 18px; }
+  .decred-pay-row__title {
+    padding-bottom: 8px;
+    font-size: 24px; }
+  .decred-pay-row__instructions {
+    color: #2ed8a3;
     font-size: 18px; }
   .decred-pay .decred-pay-row .decred-pay-info-field {
     position: relative;
     font-family: "Inconsolata", monospace;
     font-size: 16px;
+    color: #000000;
     background-color: #ffffff;
     white-space: normal;
     min-height: 25px;
@@ -91,10 +99,10 @@
       right: 10px; }
   .decred-pay .decred-pay-row + .decred-pay-row {
     margin-top: 8px; }
-  .decred-pay .decred-pay-row__amount .decred-pay-info-field {
+  .decred-pay .decred-pay-info-field {
     padding-top: 6px;
-    min-height: 30px; }
-    .decred-pay .decred-pay-row__amount .decred-pay-info-field .decred-icon_copy {
+    padding-bottom: 6px; }
+    .decred-pay .decred-pay-info-field .decred-icon_copy {
       top: 15px; }
   .decred-pay .decred-pay-row::after {
     content: "";
@@ -122,38 +130,3 @@
     display: block;
     float: left;
     margin: 10px 0; }
-
-.decred-plugin {
-  font-family: 'Source Sans Pro', sans-serif;
-  color: #0c1e3e; }
-  .decred-plugin .payment-method-title {
-    cursor: pointer; }
-    .decred-plugin .payment-method-title label {
-      cursor: pointer; }
-    .decred-plugin .payment-method-title input[type="radio"], .decred-plugin .payment-method-title input[type="radio"] + label img, .decred-plugin .payment-method-title .decred-label {
-      vertical-align: middle; }
-  .decred-plugin p {
-    font-size: 14px;
-    color: #596d81; }
-  .decred-plugin .decred-label {
-    float: right; }
-  .decred-plugin .decred-refund-address-wrapper .decred-error {
-    color: #fd714b;
-    font-size: 14px; }
-  .decred-plugin .decred-refund-address-wrapper .decred-error-wrapper {
-    margin-top: 9px;
-    display: none; }
-    .decred-plugin .decred-refund-address-wrapper .decred-error-wrapper.show {
-      display: block; }
-  .decred-plugin .decred-refund-address-wrapper label {
-    margin-bottom: 11px;
-    font-size: 18px;
-    font-weight: normal; }
-  .decred-plugin .decred-place-order {
-    width: 153px;
-    height: 51px;
-    border-radius: 5px;
-    background-color: #2f74fb !important;
-    font-family: 'Source Sans Pro', sans-serif;
-    color: #ffffff;
-    font-size: 20px; }

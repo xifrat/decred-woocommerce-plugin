@@ -18,7 +18,7 @@ defined( 'ABSPATH' ) || exit; // prevent direct URL execution.
 
 global $decred_wc_plugin; // global makes testing easier.
 
-include_once 'includes/class-plugin.php';
+require_once __DIR__ . '/includes/class-plugin.php';
 
 $decred_wc_plugin = new Plugin( __FILE__ );
 

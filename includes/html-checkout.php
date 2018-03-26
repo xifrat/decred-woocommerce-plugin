@@ -8,17 +8,10 @@ namespace Decred\Payments\WooCommerce;
 
 defined( 'ABSPATH' ) || exit;  // prevent direct URL execution.
 
-// TODO replace with JS formatting as in Magento plugin.
-$amount_big   = floor( $dcr_amount * 100 ) / 100;
-$amount_small = sprintf( '%01.7f', round( $dcr_amount - $amount_big, 7 ) );
-$amount_small = substr( $amount_small, 4, 5 );
-
 ?>
 	<span class="decred-label">
 		<span><?php echo __( 'Amount to pay:', 'decred' ); ?>&nbsp;</span>
-		<span class="decred-price" style="color: black;">
-			<span class="decred-amount decred-amount__big" data-bind="text: displayDecredAmountBig"><?php echo $amount_big; ?><span class="decred-amount decred-amount__small" data-bind="text: displayDecredAmountSmall"><?php echo $amount_small; ?>&nbsp;</span>DCR</span>
-		</span>
+		<?php require __DIR__ . '/html-dcr-amount.php'; ?>
 	</span>
 <?php
 if ( $this->show_refund_address() ) {

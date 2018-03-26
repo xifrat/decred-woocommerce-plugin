@@ -21,30 +21,33 @@ defined( 'ABSPATH' ) || exit;  // prevent direct URL execution.
 
 	<div class="decred-pay-content">
 
-			<div class="decred-pay-row">
-				<span><?php echo __( 'Payment Details', 'decred' ); ?></span>				
-			</div>
+		<div class="decred-pay-row decred-pay-row__title">
+			<span><?php echo __( 'Payment Details', 'decred' ); ?></span>
+		</div>
 
-			<div class="decred-pay-row decred-pay-row__amount">
-				<label><?php echo __( 'Exact amount to send:', 'decred' ); ?></label>
-				<pre class="decred-pay-info-field">                    <span class="decred-price">
-						<span class="decred-amount decred-amount__big" data-bind="text: displayDecredAmountBig">0.01</span>
-						<span class="decred-amount decred-amount__small">
-							<span data-bind="text: displayDecredAmountSmall">684046</span><span>&nbsp;DCR</span>
-						</span>
-					</span>
-					<i class="decred-icon_copy" data-bind="click: copyAmount"></i>
-				</pre>
-			</div>
+		<?php
+		if ( $this->instructions ) {
+			echo '<div class="decred-pay-row"><span class="decred-pay-row__instructions">';
+			echo wptexturize( $this->instructions );
+			echo '</span></div>';
+		}
+		?>
+		<div class="decred-pay-row">
+			<label><?php echo __( 'Exact amount to send:', 'decred' ); ?></label>
+			<pre class="decred-pay-info-field">
+				<?php require __DIR__ . '/html-dcr-amount.php'; ?>
+				<i class="decred-icon_copy" data-bind="click: copyAmount"></i>
+			</pre>
+		</div>
 
-			<div class="decred-pay-row decred-pay-row__address">
-				<label><?php echo __( 'Destination address:', 'decred' ); ?></label>
-				<pre class="decred-pay-info-field">                    <span data-bind="text: address">Dsj2oAg56UStZKaAPUWbbirz3Gap9GxsJFc</span>
-					<i class="decred-icon_copy" data-bind="click: copyAddress"></i>
-				</pre>
-			</div>
-
+		<div class="decred-pay-row">
+			<label><?php echo __( 'Destination address:', 'decred' ); ?></label>
+			<pre class="decred-pay-info-field">
+				<span><?php echo $this->dcr_payment_address; ?></span>
+				<i class="decred-icon_copy" data-bind="click: copyAddress"></i>
+			</pre>
+		</div>
 
 	</div>
-	
+
 </div>

@@ -17,11 +17,15 @@ JavaScript features (like Magento plugin in principle):
  - refund address validation
  - refund address required (when configuration set accordingly)
 * thank you page
+  - make the copy icons work
   - generate & show QR code in JS
   - live status widget
 
 ## possible improvements
 
+* see TODOs in code, most of them already mentioned in this file
 * automated plugin build process
+* Internationalization (i18n)
 * extensive documentation
-* Internacionalization (i18n)
+* cleanup CSS styles copied from Magento plugin
+* themes/styling/fonts: try several themes, try to make styling more generic so it blends better with any theme

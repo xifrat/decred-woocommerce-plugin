@@ -77,7 +77,16 @@ class Plugin {
 			return; // missing required WC classes, can't proceed.
 		}
 
-		require_once 'class-gateway.php';
+		$files = [
+			'class-constant.php',
+			'class-gw-base.php',
+			'class-gw-checkout.php',
+			'class-gw-thankyou.php',
+			'class-gateway.php',
+		];
+		foreach ( $files as $file ) {
+			require_once __DIR__ . "/$file";
+		}
 
 		$this->logger = new \WC_Logger();
 
