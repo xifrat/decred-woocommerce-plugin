@@ -12,9 +12,13 @@ Official implementation of Decred payments for WooCommerce.
 * register plugin on WordPress site
 * minimal documentation
 
-JavaScript features:
-- refund address validation
-- refund address required (when configuration set accordingly)
+JavaScript features (like Magento plugin in principle):
+* checkout page
+ - refund address validation
+ - refund address required (when configuration set accordingly)
+* thank you page
+  - generate & show QR code in JS
+  - live status widget
 
 ## possible improvements
 

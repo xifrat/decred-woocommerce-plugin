@@ -17,7 +17,7 @@
 
 .decred-pay {
   font-family: 'Source Sans Pro', sans-serif;
-  box-shadow: 0 1px 5px 0.1px rgba(0, 0, 0, 0.1);
+  /* box-shadow: 0 1px 5px 0.1px rgba(0, 0, 0, 0.1); */
   font-size: 22px;
   color: #596d81;
   max-width: 960px;
@@ -41,6 +41,8 @@
     display: inline-block;
     float: left;
     padding-left: 35px; }
+  .decred-pay .decred-pay-logo {
+    float: right; }
   .decred-pay .decred-pay-status {
     cursor: auto;
     border: 1px solid #2f74fb;
