@@ -88,6 +88,9 @@ class Plugin {
 			require_once __DIR__ . "/$file";
 		}
 
+		// Autoload Decred PHP API and its dependencies via composer.
+		require_once dirname( __DIR__ ) . '/vendor/autoload.php';
+
 		$this->logger = new \WC_Logger();
 
 		$this->operational = true;
