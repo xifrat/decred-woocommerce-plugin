@@ -35,7 +35,6 @@ class GW_Thankyou extends GW_Checkout {
 	public function thankyou_page() {
 
 		$this->get_dcr_data_from_order();
-		$this->format_amount();
 
 		require __DIR__ . '/html-thankyou.php';
 	}
@@ -46,7 +45,7 @@ class GW_Thankyou extends GW_Checkout {
 	public function get_dcr_data_from_order() {
 
 		// TODO replace by amount saved at checkout.
-		$this->convert_to_dcr();
+		$this->dcr_amount = 2.2223333;
 
 		// TODO replace by receiving address from wallet saved at checkout.
 		$this->dcr_payment_address = 'TsWjioPrP8E1TuTMmTrVMM2BA4iPrjQXBpR';

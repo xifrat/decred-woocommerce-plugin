@@ -34,21 +34,61 @@ class GW_Checkout extends GW_Base {
 	}
 
 	/**
-	 *  TODO convert order fiat amount into DCR
+	 * Convert fiat amount to DCR
+	 *
+	 * @param string $currency fiat currency code (ISO 4217).
+	 * @param float  $amount fiat amount to convert.
+	 *
+	 * @return float amount in DCR.
+	 * @throws \Exception TODO catch.
 	 */
-	public function convert_to_dcr() {
-		$this->dcr_amount = 3.4507890;
+	public function convert_to_dcr( $currency, $amount ) {
+		return \Decred\Rate\CoinMarketCap::getRate( $currency )->convertToCrypto( $amount );
 	}
 
 	/**
 	 * HTML form with payment fields
+	 *
+	 * TODO error management
 	 */
 	public function payment_fields() {
+		try {
 
-		$this->convert_to_dcr();
-		$this->format_amount();
+			$this->dcr_amount = $this->get_dcr_amount();
+			require __DIR__ . '/html-checkout.php';
 
-		require __DIR__ . '/html-checkout.php';
+		} catch ( \Exception $e ) {
+			// TODO log $e.
+			printf(
+				// translators: don't translate error message.
+				esc_html__( 'There was an error while trying to get the DCR amount: "%s".', 'decred' ),
+				$e->getMessage()
+			);
+		}
+	}
+
+	/**
+	 * Get cart total amount converted into DCR
+	 *
+	 * @throws \Exception Any error that prevents returning an accurate amount.
+	 * @return float DCR amount.
+	 */
+	private function get_dcr_amount() {
+		if ( ! function_exists( 'get_woocommerce_currency' ) ) {
+			throw new \Exception( 'get_woocommerce_currency() does not exist' );
+		}
+		$currency = get_woocommerce_currency();
+
+		global $woocommerce;
+		if ( ! is_object( $woocommerce->cart ) || ! method_exists( $woocommerce->cart, 'get_total' ) ) {
+			throw new \Exception( 'global $woocommerce->cart->get_total() does not exist' );
+		}
+		$amount = $woocommerce->cart->get_total( 'unformatted' );
+		if ( ! is_numeric( $amount ) || ! $amount > 0 ) {
+			throw new \Exception( 'total cart amount not a positive number' );
+		}
+
+		return $this->convert_to_dcr( $currency, $amount ); // may also throw exceptions.
 	}
 
 	/**

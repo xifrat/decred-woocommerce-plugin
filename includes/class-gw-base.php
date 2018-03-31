@@ -118,15 +118,4 @@ class GW_Base extends \WC_Payment_Gateway {
 		wp_enqueue_style( $handle . $i, $src );
 	}
 
-	/**
-	 * *TEMPORARY* set $dcr_big_digits & $dcr_small_digits for HTML formatting
-	 *
-	 * TODO replace with JS formatting as in Magento plugin.
-	 */
-	protected function format_amount() {
-		$this->dcr_big_digits   = floor( $this->dcr_amount * 100 ) / 100;
-		$this->dcr_small_digits = sprintf( '%01.7f', round( $this->dcr_amount - $this->dcr_big_digits, 7 ) );
-		$this->dcr_small_digits = substr( $this->dcr_small_digits, 4, 5 );
-	}
-
 }
