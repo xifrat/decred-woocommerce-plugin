@@ -25,7 +25,7 @@ class GW_Thankyou extends GW_Checkout {
 	 */
 	function thankyou_order_received_text( $text ) {
 		// use .= here if you want to keep the default (not much useful) message.
-		$text = __( ' PLEASE SEE INSTRUCCIONS BELOW FOR PAYMENT WITH DECRED.', 'decred' );
+		$text = __( 'PLEASE SEE INSTRUCCIONS BELOW FOR PAYMENT WITH DECRED.', 'decred' );
 		return $text;
 	}
 

@@ -17,17 +17,23 @@ class Fake_Cart extends Fake_Empty {
 class Fake_Gateway extends \Decred\Payments\WooCommerce\Gateway {
 
 	// test-only methods.
+	
 	public function fake_set_currency( $currency ) {
 		$this->currency = $currency;
 	}
+	
 	public function fake_set_cart_amount( $amount ) {
 		global $woocommerce;
 		$woocommerce->cart = new Fake_Cart( $amount );
 	}
 
-	// test method that overrrides original.
+	// test methods that overrride original ones.
+	
 	protected function get_currency() {
 		return $this->currency;
+	}
+	
+	public function get_dcr_data_from_order() {
 	}
 }
 
@@ -37,9 +43,9 @@ abstract class Gateway_TestCase extends \WP_UnitTestCase {
 		$this->gateway = new Fake_Gateway;
 	}
 
-	protected function get_form_html() {
+	protected function get_html( $callback ) {
 		ob_start();
-		$this->gateway->payment_fields();
+		call_user_func( [ $this->gateway, $callback ] );
 		$html = ob_get_contents();
 		ob_end_clean();
 		// echo $html; .

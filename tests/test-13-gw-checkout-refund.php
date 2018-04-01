@@ -4,7 +4,7 @@ namespace Decred\Payments\WooCommerce\Test;
 
 require_once 'class-gateway-testcase.php';
 
-class Gateway_Refund extends Gateway_TestCase {
+class GW_Checkout_Refund extends Gateway_TestCase {
 
 	public function test_checkout_form() {
 
@@ -13,7 +13,7 @@ class Gateway_Refund extends Gateway_TestCase {
 		$g->fake_set_cart_amount( 123.456 );
 
 		$g->settings['show_refund_address'] = 'no';
-		$html                               = $this->get_form_html();
+		$html                               = $this->get_html( 'payment_fields' );
 		$this->assertRegExp( '/.* class="decred-label".*/', $html );
 		$this->assertRegExp( '/.*Amount to pay.*/', $html );
 		$this->assertNotRegExp( '/.* id="wc-decred-crypto-form".*/', $html );
@@ -24,7 +24,7 @@ class Gateway_Refund extends Gateway_TestCase {
 
 		$g->settings['show_refund_address']     = 'yes';
 		$g->settings['refund_address_optional'] = 'no';
-		$html                                   = $this->get_form_html();
+		$html                                   = $this->get_html( 'payment_fields' );
 		$this->assertRegExp( '/.* class="decred-label".*/', $html );
 		$this->assertRegExp( '/.* id="wc-decred-crypto-form".*/', $html );
 		$this->assertRegExp( '/.*Decred address for refunds.*/', $html );
@@ -33,10 +33,9 @@ class Gateway_Refund extends Gateway_TestCase {
 		$this->assertRegExp( '/.* class="required".*/', $html );
 
 		$g->settings['refund_address_optional'] = 'yes';
-		$html                                   = $this->get_form_html();
+		$html                                   = $this->get_html( 'payment_fields' );
 		$this->assertNotRegExp( '/.* validate-required .*/', $html );
 		$this->assertNotRegExp( '/.* class="required".*/', $html );
-
 	}
 
 	public function test_validate_fields() {

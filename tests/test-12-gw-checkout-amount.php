@@ -4,7 +4,7 @@ namespace Decred\Payments\WooCommerce\Test;
 
 require_once 'class-gateway-testcase.php';
 
-class Gateway_Amount extends Gateway_TestCase {
+class GW_Checkout_Amount extends Gateway_TestCase {
 
 	public function test_dcr_amount() {
 
@@ -16,7 +16,7 @@ class Gateway_Amount extends Gateway_TestCase {
 
 		$g->fake_set_currency( 'EUR' );
 		$g->fake_set_cart_amount( $cart_amount );
-		$html = $this->get_form_html();
+		$html = $this->get_html( 'payment_fields' );
 
 		// Higher precision would provoke the test to fail due to
 		// slight differences in rate returned between API calls.
@@ -57,7 +57,7 @@ class Gateway_Amount extends Gateway_TestCase {
 	}
 
 	private function assertHtmlError( $string ) {
-		$html = $this->get_form_html();
+		$html = $this->get_html( 'payment_fields' );
 		$this->assertRegExp( '/.*' . $string . '.*/', $html );
 	}
 }
