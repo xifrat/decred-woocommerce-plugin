@@ -77,7 +77,7 @@ class GW_Checkout extends GW_Base {
 		if ( ! function_exists( 'get_woocommerce_currency' ) ) {
 			throw new \Exception( 'get_woocommerce_currency() does not exist' );
 		}
-		$currency = get_woocommerce_currency();
+		$currency = $this->get_currency();
 
 		global $woocommerce;
 		if ( ! is_object( $woocommerce->cart ) || ! method_exists( $woocommerce->cart, 'get_total' ) ) {
@@ -89,6 +89,15 @@ class GW_Checkout extends GW_Base {
 		}
 
 		return $this->convert_to_dcr( $currency, $amount ); // may also throw exceptions.
+	}
+
+	/**
+	 * Get WC currency. Wraps global function to allow testing by overriding this method.
+	 *
+	 * @return string currency code.
+	 */
+	protected function get_currency() {
+		return get_woocommerce_currency();
 	}
 
 	/**

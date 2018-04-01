@@ -1,0 +1,6 @@
+phpcs | grep -v "Missing doc comment" \
+      | grep -v "Missing file doc comment" \
+      | grep -v "Class file names should" \
+      | grep -v "WordPress.Files.FileName.InvalidClassFileName" \
+      | grep -v "for a function comment" \
+      | grep -v "this commented out code"
