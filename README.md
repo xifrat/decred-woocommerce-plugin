@@ -21,6 +21,7 @@ WordPress plugin that enables Decred as payment method for the WooCommerce plugi
 ### Backend
 * Internationalization (i18n)
 * extended documentation
+* refund address validation: TODO futher validation of the third+ characters.
 
 ### Frontend
 * JavaScript features (like Magento plugin in principle) in checkout page: 

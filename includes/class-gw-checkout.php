@@ -140,13 +140,23 @@ class GW_Checkout extends GW_Base {
 
 	/**
 	 *
-	 * Verify if the refund address is a valid Decred one. TODO implement fully.
+	 * Verify if the refund address is a valid Decred one.
+	 *
+	 * Currently:
+	 * - length 35
+	 * - initial two characters 'Ds' (mainnet) or 'Ts' (testnet)
+	 *
+	 * TODO futher validation of the third+ characters.
 	 *
 	 * @param string $address Decred refund address.
 	 * @return boolean
 	 */
 	public function validate_refund_address( $address ) {
-		return strlen( $address ) == 35;
+		// @codingStandardsIgnoreStart
+		return strlen( $address ) == 35
+			&& ( $address[0] == 'D' || $address[0] == 'T' )
+			&& $address[1] == 's';
+		// @codingStandardsIgnoreEnd
 	}
 
 	/**

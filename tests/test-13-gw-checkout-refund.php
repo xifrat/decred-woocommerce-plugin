@@ -46,20 +46,24 @@ class GW_Checkout_Refund extends Gateway_TestCase {
 		$g->settings['show_refund_address'] = 'no'; // note settings property is implementation dependant.
 		$this->validate_true( '' );
 		$this->validate_false( 'fake1FAKE1fake', 'plugin error' );
-		$this->validate_false( 'Dcv9xcExyjJTFELNhhnp19xNF1jhgUfL1kG', 'plugin error' );
+		$this->validate_false( 'Tsv9xcExyjJTFELNhhnp19xNF1jhgUfL1kG', 'plugin error' );
 
 		// refund address shown and required.
 		$g->settings['show_refund_address']     = 'yes';
 		$g->settings['refund_address_optional'] = 'no';
-		$this->validate_false( '', 'enter a valid' );
-		$this->validate_false( 'fake2FAKE2fake', 'enter a valid' );
+		$this->validate_false( '' );
+		$this->validate_false( 'fake2FAKE2fake' );
 		$this->validate_true( 'Dso2YsjNZzaDNKnomERu5sPmkcZEL2VJCPf' );
 
 		// refund address shown but optional.
 		$g->settings['refund_address_optional'] = 'yes';
 		$this->validate_true( '' );
-		$this->validate_false( 'fake3FAKE3fake', 'enter a valid' );
-		$this->validate_true( 'Dso2YsjNZzaDNKnomERu5sPmkcZEL2VJCPf' );
+		$this->validate_false( 'fake3FAKE3fake' );
+		$this->validate_true( 'Tso2YsjNZzaDNKnomERu5sPmkcZEL2VJCPf' );
+
+		// verify validation of two initial characters (Ds mainnet, Ts testnet).
+		$this->validate_false( 'Wso2YsjNZzaDNKnomERu5sPmkcZEL2VJCPf' );
+		$this->validate_false( 'Tzo2YsjNZzaDNKnomERu5sPmkcZEL2VJCPf' );
 
 	}
 
@@ -68,7 +72,7 @@ class GW_Checkout_Refund extends Gateway_TestCase {
 		$this->assertTrue( $this->gateway->validate_fields(), "Failed TRUE address: $address" );
 	}
 
-	private function validate_false( $address, $notice_portion ) {
+	private function validate_false( $address, $notice_portion = 'enter a valid' ) {
 
 		$_POST['decred-refund-address'] = $address;
 		$this->assertFalse( $this->gateway->validate_fields(), "Failed FALSE address: $address" );
@@ -90,7 +94,7 @@ class GW_Checkout_Refund extends Gateway_TestCase {
 			[ 987.123, false ],
 			[ '', false ],
 			[ 'aaabbbccc', false ],
-			[ 'DcrPwFMQW8v4FpHn2BBWiyVm7wr8HUgTcuc', true ],
+			[ 'DsrPwFMQW8v4FpHn2BBWiyVm7wr8HUgTcuc', true ],
 		];
 
 		foreach ( $tests as $test ) {
