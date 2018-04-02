@@ -31,8 +31,6 @@ class Fake_Gateway extends \Decred\Payments\WooCommerce\Gateway {
 		return $this->currency;
 	}
 
-	public function get_dcr_data_from_order() {
-	}
 }
 
 abstract class Gateway_TestCase extends \WP_UnitTestCase {
@@ -41,9 +39,9 @@ abstract class Gateway_TestCase extends \WP_UnitTestCase {
 		$this->gateway = new Fake_Gateway;
 	}
 
-	protected function get_html( $callback ) {
+	protected function get_html( $callback, $param = null ) {
 		ob_start();
-		call_user_func( [ $this->gateway, $callback ] );
+		call_user_func( [ $this->gateway, $callback ], $param );
 		$html = ob_get_contents();
 		ob_end_clean();
 		// echo $html; .

@@ -68,8 +68,13 @@ class GW_Checkout_Refund extends Gateway_TestCase {
 	}
 
 	private function validate_true( $address ) {
+
 		$_POST['decred-refund-address'] = $address;
 		$this->assertTrue( $this->gateway->validate_fields(), "Failed TRUE address: $address" );
+
+		if ( ! empty( $address ) ) {
+			$this->assertEquals( WC()->session->get( 'decred_refund_address' ), $address );
+		}
 	}
 
 	private function validate_false( $address, $notice_portion = 'enter a valid' ) {
@@ -82,6 +87,7 @@ class GW_Checkout_Refund extends Gateway_TestCase {
 		$this->assertTrue( count( $notices['error'] ) > 0 );
 		$last_notice = array_pop( $notices['error'] );
 		$this->assertContains( $notice_portion, $last_notice );
+		$this->assertEmpty( WC()->session->get( 'decred_refund_address' ) );
 	}
 
 	public function test_validate_refund_address() {

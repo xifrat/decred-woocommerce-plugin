@@ -19,6 +19,13 @@ defined( 'ABSPATH' ) || exit;  // prevent direct URL execution.
 class GW_Thankyou extends GW_Checkout {
 
 	/**
+	 * DCR paymnent address to show in thankyou page.
+	 *
+	 * @var string dcr_payment_address
+	 */
+	public $dcr_payment_address;
+
+	/**
 	 * Add a note to the "order received" text on top of the thankyou page
 	 *
 	 * @param string $text default text WooCommerce shows.
@@ -31,24 +38,24 @@ class GW_Thankyou extends GW_Checkout {
 
 	/**
 	 * Output for the order received page.
+	 *
+	 * @param int $order_id .
 	 */
-	public function thankyou_page() {
+	public function thankyou_page( $order_id ) {
 
-		$this->get_dcr_data_from_order();
+		$this->recover_decred_data( $order_id );
 
 		require __DIR__ . '/html-thankyou.php';
 	}
 
 	/**
-	 * Recover DCR amount & address recorded at checkout time
+	 * Recover Decred data saved to DB at checkout time
+	 *
+	 * @param int $order_id .
 	 */
-	public function get_dcr_data_from_order() {
-
-		// TODO replace by amount saved at checkout.
-		$this->dcr_amount = 2.2223333;
-
-		// TODO replace by receiving address from wallet saved at checkout.
-		$this->dcr_payment_address = 'TsWjioPrP8E1TuTMmTrVMM2BA4iPrjQXBpR';
+	public function recover_decred_data( $order_id ) {
+		// Recover DCR amount & payment address saved at checkout time.
+		$this->dcr_amount          = get_post_meta( $order_id, 'decred_amount', true );
+		$this->dcr_payment_address = get_post_meta( $order_id, 'decred_payment_address', true );
 	}
-
 }

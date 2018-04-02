@@ -20,6 +20,13 @@ require_once __DIR__ . '/class-constant.php';
 class GW_Checkout extends GW_Base {
 
 	/**
+	 * DCR amount to show in checkout & thankyou pages.
+	 *
+	 * @var float dcr_amount
+	 */
+	public $dcr_amount;
+
+	/**
 	 * Show refund address in checkout page?
 	 */
 	public function show_refund_address() {
@@ -52,9 +59,16 @@ class GW_Checkout extends GW_Base {
 	 * TODO error management
 	 */
 	public function payment_fields() {
+
+		WC()->session->set( 'decred_amount', null );
+
 		try {
 
 			$this->dcr_amount = $this->get_dcr_amount();
+
+			// save amount now to retrieve it later when order created.
+			WC()->session->set( 'decred_amount', $this->dcr_amount );
+
 			require __DIR__ . '/html-checkout.php';
 
 		} catch ( \Exception $e ) {
@@ -117,6 +131,9 @@ class GW_Checkout extends GW_Base {
 	 * Validate HTML form fields
 	 */
 	public function validate_fields() {
+
+		WC()->session->set( 'decred_refund_address', null );
+
 		$address = $this->get_post( 'decred-refund-address' );
 
 		// this should never happen as the refund address field should be missing.
@@ -132,7 +149,12 @@ class GW_Checkout extends GW_Base {
 			$address_is_valid = $this->validate_refund_address( $address );
 		}
 
-		if ( ! $address_is_valid ) {
+		if ( $address_is_valid ) {
+			if ( ! empty( $address ) ) {
+				// save address now to retrieve it later when order created.
+				WC()->session->set( 'decred_refund_address', $address );
+			}
+		} else {
 			wc_add_notice( __( 'Please enter a valid Decred address for refunds.', 'decred' ), 'error' );
 		}
 		return $address_is_valid;
@@ -160,6 +182,30 @@ class GW_Checkout extends GW_Base {
 	}
 
 	/**
+	 * Set additional order data just after it was created.
+	 *
+	 * WC peculiarities:
+	 * - orders are saved as "posts"
+	 * - additional fields are saved as "post metadata"
+	 *
+	 * @param int $order_id .
+	 */
+	public function woocommerce_new_order( $order_id ) {
+		add_post_meta( $order_id, 'decred_amount', WC()->session->get( 'decred_amount' ) );
+		add_post_meta( $order_id, 'decred_refund_address', WC()->session->get( 'decred_refund_address' ) );
+		add_post_meta( $order_id, 'decred_payment_address', $this->get_new_payment_address() );
+	}
+
+	/**
+	 * Call Decred API to get a new DCR receiving address.
+	 *
+	 * @return string
+	 */
+	public function get_new_payment_address() {
+		return 'TsPAYajNZzaDNKnomERu5sPmkcZEL2VJCPf'; // TODO get from API.
+	}
+
+	/**
 	 * Process the payment and return the result.
 	 *
 	 * @param int $order_id .
@@ -170,19 +216,16 @@ class GW_Checkout extends GW_Base {
 		$order = wc_get_order( $order_id );
 
 		if ( $order->get_total() > 0 ) {
-			// Mark as on-hold (we're awaiting the cheque).
 			$order->update_status( 'on-hold', __( 'Awaiting Decred payment', 'decred' ) );
 		} else {
 			$order->payment_complete();
 		}
 
-		// Reduce stock levels.
 		wc_reduce_stock_levels( $order_id );
 
-		// Remove cart.
 		WC()->cart->empty_cart();
 
-		// Return thankyou redirect.
+		// Return thankyou page redirect.
 		return array(
 			'result'   => 'success',
 			'redirect' => $this->get_return_url( $order ),

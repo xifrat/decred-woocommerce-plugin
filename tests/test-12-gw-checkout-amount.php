@@ -12,6 +12,7 @@ class GW_Checkout_Amount extends Gateway_TestCase {
 
 		$cart_amount = 123.456;
 		$eur_xrate   = `curl -s https://api.coinmarketcap.com/v1/ticker/decred/?convert=EUR | grep price_eur | awk '{ print $2 }' | tr -d '",'`;
+		$eur_xrate   = trim( $eur_xrate );
 		$dcr_amount  = $cart_amount / $eur_xrate;
 
 		$g->fake_set_currency( 'EUR' );
@@ -22,6 +23,8 @@ class GW_Checkout_Amount extends Gateway_TestCase {
 		// slight differences in rate returned between API calls.
 		$precision = 4;
 		$this->assertEquals( round( $g->dcr_amount, $precision ), round( $dcr_amount, $precision ) );
+
+		$this->assertEquals( WC()->session->get( 'decred_amount' ), $g->dcr_amount );
 	}
 
 	public function test_dcr_amount_errors() {

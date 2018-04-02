@@ -16,12 +16,14 @@ class GW_Thankyou extends Gateway_TestCase {
 
 		$g = $this->gateway;
 
-		$g->dcr_amount          = 234.5566666;
-		$g->dcr_payment_address = 'FAKEFAKEFAKE';
-		$html                   = $this->get_html( 'thankyou_page' );
+		$order_id = 123;
+		add_post_meta( $order_id, 'decred_amount', 234.5677777 );
+		add_post_meta( $order_id, 'decred_payment_address', 'FAKEFAKEFAKE' );
+
+		$html = $this->get_html( 'thankyou_page', $order_id );
 
 		$txt = preg_replace( '/\s*/m', '', strip_tags( $html ) );
-		$this->assertRegExp( '/.*amounttosend:234.5566666&nbsp;DCR.*/', $txt );
+		$this->assertRegExp( '/.*amounttosend:234.5677777&nbsp;DCR.*/', $txt );
 
 		$this->assertRegExp( '/.*<span>FAKEFAKEFAKE<\/span>.*/', strip_tags( $html, '<span>' ) );
 	}

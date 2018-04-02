@@ -66,6 +66,8 @@ class GW_Base extends Gateway_TestCase {
 			'woocommerce_thankyou_' . $g->id,
 			'woocommerce_email_before_order_table',
 			'wp_enqueue_scripts',
+			'woocommerce_new_order',
+			'woocommerce_thankyou_order_received_text',
 		);
 
 		foreach ( $actions as $action ) {
