@@ -62,11 +62,20 @@ class Plugin {
 	 * Intialize plugin (set callbacks).
 	 */
 	public function init() {
+		register_activation_hook( $this->name, [ $this, 'activation_hook' ] );
 		add_action( 'plugins_loaded', [ $this, 'callback_plugins_loaded' ], 0 );
 		add_filter( 'woocommerce_payment_gateways', [ $this, 'callback_add_payment_method' ] );
 		add_filter( 'plugin_action_links_' . $this->name, [ $this, 'callback_action_links' ] );
 	}
 
+	/**
+	 * Plugin activation hook. Verify requirements.
+	 */
+	public function activation_hook() {
+		if ( ! extension_loaded( 'gmp' ) ) {
+			wp_die( __( 'PHP\'s GMP extension missing, this plugin requires it.', 'decred' ) );
+		}
+	}
 	/**
 	 * Initializations that depend on previous plugins being loaded.
 	 * We specifically need a number of WooCommerce plugin classes (WC_*).
@@ -75,6 +84,11 @@ class Plugin {
 
 		if ( ! class_exists( 'WC_Payment_Gateway' ) || ! class_exists( 'WC_Logger' ) ) {
 			return; // missing required WC classes, can't proceed.
+		}
+
+		// required for Decred PHP API.
+		if ( ! extension_loaded( 'gmp' ) ) {
+			return;
 		}
 
 		$files = [
@@ -124,7 +138,7 @@ class Plugin {
 		$logs_link = '<a href="' . get_bloginfo( 'wpurl' ) . '/wp-admin/admin.php?page=wc-status&tab=logs&log_file=' . $log_file . '">Logs</a>';
 		array_unshift( $links, $logs_link );
 
-		$settings_link = '<a href="' . get_bloginfo( 'wpurl' ) . '/wp-admin/admin.php?page=wc-settings&tab=checkout&section=wc_decred_payments">Settings</a>';
+		$settings_link = '<a href="' . get_bloginfo( 'wpurl' ) . '/wp-admin/admin.php?page=wc-settings&tab=checkout&section=decred">Settings</a>';
 		array_unshift( $links, $settings_link );
 
 		return $links;
