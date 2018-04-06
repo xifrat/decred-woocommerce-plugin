@@ -69,8 +69,18 @@ class GW_Checkout_Refund extends Gateway_TestCase {
 
 	private function validate_true( $address ) {
 
+		WC()->session->set( 'wc_notices', null );	
 		$_POST['decred-refund-address'] = $address;
-		$this->assertTrue( $this->gateway->validate_fields(), "Failed TRUE address: $address" );
+		
+		$this->gateway->validate_refund_address_field();
+		$notices = WC()->session->get( 'wc_notices', [] );
+		if ( isset( $notices['error'] ) ) {
+			$error_message = array_pop( $notices['error'] );
+		} else {
+			$error_message = '';
+		}
+
+		$this->assertTrue( empty( $error_message ), "Failed TRUE address: $address with error '$error_message'" );
 
 		if ( ! empty( $address ) ) {
 			$this->assertEquals( WC()->session->get( 'decred_refund_address' ), $address );
@@ -79,8 +89,9 @@ class GW_Checkout_Refund extends Gateway_TestCase {
 
 	private function validate_false( $address, $notice_portion = 'enter a valid' ) {
 
+		WC()->session->set( 'wc_notices', null );
 		$_POST['decred-refund-address'] = $address;
-		$this->assertFalse( $this->gateway->validate_fields(), "Failed FALSE address: $address" );
+		$this->gateway->validate_refund_address_field();
 
 		$notices = WC()->session->get( 'wc_notices', array() );
 		$this->assertArrayHasKey( 'error', $notices );
@@ -90,7 +101,7 @@ class GW_Checkout_Refund extends Gateway_TestCase {
 		$this->assertEmpty( WC()->session->get( 'decred_refund_address' ) );
 	}
 
-	public function test_validate_refund_address() {
+	public function test_validate_address() {
 
 		$g = $this->gateway;
 
@@ -106,7 +117,7 @@ class GW_Checkout_Refund extends Gateway_TestCase {
 		foreach ( $tests as $test ) {
 			$address = $test[0];
 			$result  = $test[1];
-			$this->assertEquals( $g->validate_refund_address( $address ), $result, "Failing test address: $address" );
+			$this->assertEquals( $g->validate_address( $address ), $result, "Failing test address: $address" );
 		}
 
 	}

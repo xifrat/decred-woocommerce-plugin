@@ -49,7 +49,7 @@ class GW_Checkout extends GW_Base {
 	 * @param float  $amount fiat amount to convert.
 	 *
 	 * @return float amount in DCR.
-	 * @throws \Exception TODO catch.
+	 * @throws \Exception Possible diverse errors from decred-php-api.
 	 */
 	public function convert_to_dcr( $currency, $amount ) {
 		return \Decred\Rate\CoinMarketCap::getRate( $currency )->convertToCrypto( $amount );
@@ -86,7 +86,9 @@ class GW_Checkout extends GW_Base {
 	/**
 	 * Get cart total amount converted into DCR
 	 *
-	 * @throws \Exception Any error that prevents returning an accurate amount.
+	 * @throws \Exception Errors in currency or total cart amount.
+	 * @throws \Exception Errors from decred-php-api.
+	 *
 	 * @return float DCR amount.
 	 */
 	private function get_dcr_amount() {
@@ -165,7 +167,7 @@ class GW_Checkout extends GW_Base {
 		if ( empty( $address ) && ! $this->require_refund_address() ) {
 			$address_is_valid = true;
 		} else {
-			$address_is_valid = $this->validate_refund_address( $address );
+			$address_is_valid = $this->validate_address( $address );
 		}
 
 		if ( $address_is_valid ) {
@@ -174,7 +176,9 @@ class GW_Checkout extends GW_Base {
 				WC()->session->set( 'decred_refund_address', $address );
 			}
 		} else {
-			wc_add_notice( __( 'Please enter a valid Decred address for refunds.', 'decred' ), 'error' );
+			// translators: parameter is address entered by user, not to be translated.
+			$message = __( 'Please enter a valid Decred address for refunds. Wrong address "%s"', 'decred' );
+			wc_add_notice( sprintf( $message, $address ), 'error' );
 		}
 	}
 
@@ -222,8 +226,8 @@ class GW_Checkout extends GW_Base {
 	 * the master public key saved in settings.
 	 *
 	 * @param int $index counter for the extended key.
-	 *
 	 * @return string
+	 * @throws \Exception Errors from decred-php-api.
 	 */
 	public function get_new_payment_address( $index ) {
 
