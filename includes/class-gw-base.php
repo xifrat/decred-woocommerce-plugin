@@ -62,6 +62,12 @@ class GW_Base extends \WC_Payment_Gateway {
 				'label'   => __( 'Enable Decred direct payments', 'decred' ),
 				'default' => 'no',
 			),
+			'master_public_key'       => array(
+				'title'       => __( 'Master public key', 'decred' ),
+				'type'        => 'text',
+				'description' => __( 'Enter the master public key of the wallet you use to receive payments. Your wallet software should have an option to view it.', 'decred' ),
+				'desc_tip'    => true,
+			),
 			'title'                   => array(
 				'title'       => __( 'Title', 'decred' ),
 				'type'        => 'text',

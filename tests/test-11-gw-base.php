@@ -37,7 +37,7 @@ class GW_Base extends Gateway_TestCase {
 		 * Form fields
 		 */
 		// setup form should have these fields.
-		$form_field_names = array( 'enabled', 'title', 'description', 'instructions', 'show_refund_address', 'refund_address_optional' );
+		$form_field_names = array( 'enabled', 'master_public_key','title', 'description', 'instructions', 'show_refund_address', 'refund_address_optional' );
 		$num_fields       = count( $form_field_names );
 		$this->assertCount( $num_fields, $g->form_fields );
 
