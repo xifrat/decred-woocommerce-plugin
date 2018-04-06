@@ -5,6 +5,8 @@
 
 namespace Decred\Payments\WooCommerce;
 
+use Decred\Crypto\ExtendedKey;
+
 defined( 'ABSPATH' ) || exit;  // prevent direct URL execution.
 
 require_once __DIR__ . '/class-constant.php';
@@ -129,8 +131,25 @@ class GW_Checkout extends GW_Base {
 
 	/**
 	 * Validate HTML form fields
+	 *
+	 * Note that errors are signaled by a second parameter 'error' in wc_add_notice().
+	 * If no such call is made WC assumes the validations passed.
 	 */
 	public function validate_fields() {
+
+		$this->validate_refund_address_field();
+
+		$this->obtain_payment_address();
+	}
+
+	/**
+	 * Validate refund address field
+	 *
+	 * - verify field is not set if not shown
+	 * - verify field is set if required
+	 * - if set verify it's a valid address
+	 */
+	public function validate_refund_address_field() {
 
 		WC()->session->set( 'decred_refund_address', null );
 
@@ -157,12 +176,10 @@ class GW_Checkout extends GW_Base {
 		} else {
 			wc_add_notice( __( 'Please enter a valid Decred address for refunds.', 'decred' ), 'error' );
 		}
-		return $address_is_valid;
 	}
 
 	/**
-	 *
-	 * Verify if the refund address is a valid Decred one.
+	 * Verify that an address is a valid Decred one.
 	 *
 	 * Currently:
 	 * - length 35
@@ -170,10 +187,10 @@ class GW_Checkout extends GW_Base {
 	 *
 	 * TODO futher validation of the third+ characters.
 	 *
-	 * @param string $address Decred refund address.
+	 * @param string $address Decred address.
 	 * @return boolean
 	 */
-	public function validate_refund_address( $address ) {
+	public function validate_address( $address ) {
 		// @codingStandardsIgnoreStart
 		return strlen( $address ) == 35
 			&& ( $address[0] == 'D' || $address[0] == 'T' )
@@ -182,27 +199,68 @@ class GW_Checkout extends GW_Base {
 	}
 
 	/**
-	 * Set additional order data just after it was created.
+	 * Obtain a new Decred payment address that will be shown in the thankyou page.
+	 * Don't proceed to the thankyou page if some error is detected.
+	 */
+	public function obtain_payment_address() {
+
+		try {
+			$address = $this->get_new_payment_address( 1 );
+
+			// save address now to retrieve it later when order created.
+			WC()->session->set( 'decred_payment_address', $address );
+
+		} catch ( \Exception $e ) {
+			// translators: %s = error message, not to be translated.
+			$message = sprintf( __( 'There was an error while trying to get the DCR payment address: "%s".', 'decred' ), $e->getMessage() );
+			wc_add_notice( $message, 'error' );
+		}
+	}
+
+	/**
+	 * Call Decred API to get a new DCR receiving address by using
+	 * the master public key saved in settings.
+	 *
+	 * @param int $index counter for the extended key.
+	 *
+	 * @return string
+	 */
+	public function get_new_payment_address( $index ) {
+
+		$mpk = $this->settings['master_public_key'];
+
+		$extended_key = ExtendedKey::fromString( $mpk );
+
+		return $extended_key
+			->publicChildKey( 0 )
+			->publicChildKey( $index )
+			->getAddress();
+	}
+
+	/**
+	 * Once the order has been created, save to the DB additional
+	 * payment fields for future use/reference.
+	 *
+	 * They will show in the order's admin page as "custom fields".
+	 *
+	 * We used the session to save them temporarily at different moments,
+	 * we now recover them all from the session.
 	 *
 	 * WC peculiarities:
 	 * - orders are saved as "posts"
-	 * - additional fields are saved as "post metadata"
+	 * - additional "custom fields" are saved as "post metadata"
 	 *
 	 * @param int $order_id .
 	 */
 	public function woocommerce_new_order( $order_id ) {
-		add_post_meta( $order_id, 'decred_amount', WC()->session->get( 'decred_amount' ) );
-		add_post_meta( $order_id, 'decred_refund_address', WC()->session->get( 'decred_refund_address' ) );
-		add_post_meta( $order_id, 'decred_payment_address', $this->get_new_payment_address() );
-	}
 
-	/**
-	 * Call Decred API to get a new DCR receiving address.
-	 *
-	 * @return string
-	 */
-	public function get_new_payment_address() {
-		return 'TsPAYajNZzaDNKnomERu5sPmkcZEL2VJCPf'; // TODO get from API.
+		$fields = [ 'decred_amount', 'decred_refund_address', 'decred_payment_address' ];
+
+		foreach ( $fields as $field ) {
+			$value = WC()->session->get( $field );
+			add_post_meta( $order_id, $field, $value );
+		}
+
 	}
 
 	/**
