@@ -35,6 +35,8 @@ class Fake_Gateway extends \Decred\Payments\WooCommerce\Gateway {
 
 abstract class Gateway_TestCase extends \WP_UnitTestCase {
 
+	const MPK = 'tpubVooPRcVnuzBcqypmxFvcU2wfuHDrdq9QB6xHCgwPkGQssALSA2j96HG41EYDzuj1a1taYqMiiMTCF8L4ExtZ1199rNJMdeMcFyPziLf4LmK';
+	
 	public function setUp() {
 		$this->gateway = new Fake_Gateway;
 	}

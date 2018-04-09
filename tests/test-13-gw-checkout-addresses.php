@@ -4,7 +4,7 @@ namespace Decred\Payments\WooCommerce\Test;
 
 require_once 'class-gateway-testcase.php';
 
-class GW_Checkout_Refund extends Gateway_TestCase {
+class GW_Checkout_Addresses extends Gateway_TestCase {
 
 	public function test_checkout_form() {
 
@@ -122,8 +122,6 @@ class GW_Checkout_Refund extends Gateway_TestCase {
 	
 	public function test_get_payment_address() {
 		
-		$this->mpk = 'tpubVooPRcVnuzBcqypmxFvcU2wfuHDrdq9QB6xHCgwPkGQssALSA2j96HG41EYDzuj1a1taYqMiiMTCF8L4ExtZ1199rNJMdeMcFyPziLf4LmK';
-		
 		$this->payment_addr_wrong( null );
 		$this->payment_addr_wrong( 'aaa' );
 		$this->payment_addr_wrong( -123456 );
@@ -142,7 +140,7 @@ class GW_Checkout_Refund extends Gateway_TestCase {
 	private function payment_addr_ok( $index, $address = null ) {
 		$result = $error = '';
 		try {
-			$result = $this->gateway->get_api_payment_address( $this->mpk, $index );
+			$result = $this->gateway->get_api_payment_address( self::MPK, $index );
 		} catch ( \Exception $e ) {
 			$error = $e->getMessage();
 		}
@@ -152,7 +150,7 @@ class GW_Checkout_Refund extends Gateway_TestCase {
 	private function payment_addr_wrong( $index ) {
 		$address = $error = '';
 		try {
-			$address = $this->gateway->get_api_payment_address( $this->mpk, $index );
+			$address = $this->gateway->get_api_payment_address( self::MPK, $index );
 		} catch ( \Exception $e ) {
 			$error = $e->getMessage();
 		}

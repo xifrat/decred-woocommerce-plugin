@@ -8,7 +8,7 @@ use Decred\Payments\WooCommerce\Constant;
 require_once 'class-gateway-testcase.php';
 
 class GW_Base extends Gateway_TestCase {
-
+	
 	public function test_constructor() {
 
 		$g = $this->gateway;

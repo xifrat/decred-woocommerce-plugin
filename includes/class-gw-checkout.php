@@ -238,13 +238,13 @@ class GW_Checkout extends GW_Base {
 	 */
 	public function get_api_payment_address( $mpk, $index ) {
 
-		if ( ! is_numeric( $index ) || $index < 0 || $index >= 2**31 ) { // TODO this check probably better moved to decred-php-api.
+		if ( ! is_numeric( $index ) || $index < 0 || $index >= 2 ** 31 ) { // TODO this check probably better moved to decred-php-api.
 			throw new \Exception(
 				'BIP32 child address index should be a positive number less tham 2^31.'
 				. 'Received value "' . $index . '"'
 			);
 		}
-		
+
 		$extended_key = ExtendedKey::fromString( $mpk );
 
 		return $extended_key
