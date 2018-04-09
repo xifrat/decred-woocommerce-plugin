@@ -140,8 +140,6 @@ class GW_Checkout extends GW_Base {
 	public function validate_fields() {
 
 		$this->validate_refund_address_field();
-
-		$this->obtain_payment_address();
 	}
 
 	/**
@@ -203,36 +201,50 @@ class GW_Checkout extends GW_Base {
 	}
 
 	/**
-	 * Obtain a new Decred payment address that will be shown in the thankyou page.
-	 * Don't proceed to the thankyou page if some error is detected.
+	 * Get a DCR receiving address specific for this order.
+	 *
+	 * We use:
+	 * - the wallet's master public key saved in settings.
+	 * - the order id as index for the child key.
+	 *
+	 * With these we use decred-php-api to get the corresponding address.
+	 * Note the order id could potentially be out of the allowed range.
+	 * In case of errors, we save a short error message in the address field itself. TODO nicer.
+	 *
+	 * @param int $order_id .
+	 * @return string DCR receiving address or error message.
 	 */
-	public function obtain_payment_address() {
+	public function get_payment_address( $order_id ) {
 
 		try {
-			$address = $this->get_new_payment_address( 1 );
-
-			// save address now to retrieve it later when order created.
-			WC()->session->set( 'decred_payment_address', $address );
+			$mpk     = $this->settings['master_public_key'];
+			$address = $this->get_api_payment_address( $mpk, $order_id );
 
 		} catch ( \Exception $e ) {
-			// translators: %s = error message, not to be translated.
-			$message = sprintf( __( 'There was an error while trying to get the DCR payment address: "%s".', 'decred' ), $e->getMessage() );
-			wc_add_notice( $message, 'error' );
+			$address = __( 'ERROR GETTING DECRED ADDRESS', 'decred' );
 		}
+
+		return $address;
 	}
 
 	/**
-	 * Call Decred API to get a new DCR receiving address by using
-	 * the master public key saved in settings.
+	 * Call Decred API to get a DCR receiving address.
 	 *
-	 * @param int $index counter for the extended key.
-	 * @return string
+	 * @param string $mpk master public key. TODO validate or guarantee it's correct. Or use a cached ExtendedKey object.
+	 * @param int    $index for the child key.
+	 * @return string The corresponding address for the child index of the default account 0.
+	 * @throws \Exception If $index not a positive number less tham 2^31.
 	 * @throws \Exception Errors from decred-php-api.
 	 */
-	public function get_new_payment_address( $index ) {
+	public function get_api_payment_address( $mpk, $index ) {
 
-		$mpk = $this->settings['master_public_key'];
-
+		if ( ! is_numeric( $index ) || $index < 0 || $index >= 2**31 ) { // TODO this check probably better moved to decred-php-api.
+			throw new \Exception(
+				'BIP32 child address index should be a positive number less tham 2^31.'
+				. 'Received value "' . $index . '"'
+			);
+		}
+		
 		$extended_key = ExtendedKey::fromString( $mpk );
 
 		return $extended_key
@@ -258,13 +270,15 @@ class GW_Checkout extends GW_Base {
 	 */
 	public function woocommerce_new_order( $order_id ) {
 
-		$fields = [ 'decred_amount', 'decred_refund_address', 'decred_payment_address' ];
+		$fields = [ 'decred_amount', 'decred_refund_address' ];
 
 		foreach ( $fields as $field ) {
 			$value = WC()->session->get( $field );
 			add_post_meta( $order_id, $field, $value );
 		}
 
+		$value = $this->get_payment_address( $order_id );
+		add_post_meta( $order_id, 'decred_payment_address', $value );
 	}
 
 	/**
