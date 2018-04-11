@@ -59,19 +59,17 @@ class Plugin {
 	}
 
 	/**
-	 * Intialize plugin (set callbacks).
+	 * Minimal initializations, as most of them require WooCommerce plugin loaded.
 	 */
 	public function init() {
-		register_activation_hook( $this->name, [ $this, 'activation_hook' ] );
+		register_activation_hook( $this->name, [ $this, 'callback_activation_hook' ] );
 		add_action( 'plugins_loaded', [ $this, 'callback_plugins_loaded' ], 0 );
-		add_filter( 'woocommerce_payment_gateways', [ $this, 'callback_add_payment_method' ] );
-		add_filter( 'plugin_action_links_' . $this->name, [ $this, 'callback_action_links' ] );
 	}
 
 	/**
 	 * Plugin activation hook. Verify requirements.
 	 */
-	public function activation_hook() {
+	public function callback_activation_hook() {
 		if ( ! extension_loaded( 'gmp' ) ) {
 			wp_die( __( 'PHP\'s GMP extension missing, this plugin requires it.', 'decred' ) );
 		}
@@ -105,8 +103,20 @@ class Plugin {
 		// Autoload Decred PHP API and its dependencies via composer.
 		require_once dirname( __DIR__ ) . '/vendor/autoload.php';
 
-		$this->logger = new \WC_Logger();
+		$this->complete_init();
+	}
 
+	/**
+	 * Intializations once WooCommerce plugin is loaded.
+	 */
+	public function complete_init() {
+		
+		add_filter( 'woocommerce_payment_gateways', [ $this, 'callback_add_payment_method' ] );
+		add_filter( 'plugin_action_links_' . $this->name, [ $this, 'callback_action_links' ] );
+		add_filter( 'cron_schedules', [ $this, 'wp_add_schedule' ] );
+		add_action( 'decred_order_status_updater', [ $this, 'order_status_updater' ] );
+
+		$this->logger      = new \WC_Logger();
 		$this->operational = true;
 	}
 
@@ -142,6 +152,32 @@ class Plugin {
 		array_unshift( $links, $settings_link );
 
 		return $links;
+	}
+
+	/**
+	 * Add a WP-Cron schedule to be used by the order status updater.
+	 *
+	 * @param array $schedules currently defined intervals.
+	 * @return array $schedules with new element.
+	 */
+	public function wp_add_schedule( $schedules ) {
+		// translators: parameter is a number.
+		$text = esc_html__( 'Decred order status updater, every %s seconds', 'decred' );
+		$text = sprintf( $text, Constant::CRON_INTERVAL );
+
+		$schedules['decred_schedule'] = array(
+			'interval' => Constant::CRON_INTERVAL,
+			'display'  => $text,
+		);
+		return $schedules;
+	}
+	
+	public function order_status_updater() { // TODO IMPLEMENT
+		file_put_contents( 
+			'/tmp/order_status_updater.log',
+			'YET ANOTHER LINE ' . date( "Y-m-d", time() ),
+			FILE_APPEND
+			);
 	}
 
 }

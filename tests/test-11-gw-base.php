@@ -55,12 +55,7 @@ class GW_Base extends Gateway_TestCase {
 
 		/**
 		 * Actions
-		 *
-		 * Note these tests are very implementation dependant,
-		 * they might break in future WP/WC versions
 		 */
-		global $wp_filter;
-
 		$actions = array(
 			'woocommerce_update_options_payment_gateways_' . $g->id,
 			'woocommerce_thankyou_' . $g->id,
@@ -69,24 +64,7 @@ class GW_Base extends Gateway_TestCase {
 			'woocommerce_new_order',
 			'woocommerce_thankyou_order_received_text',
 		);
-
-		foreach ( $actions as $action ) {
-			// actions get saved in $wp_filter as WP_Hook objects.
-			$this->assertArrayHasKey( $action, $wp_filter );
-			$this->assertEquals( 'WP_Hook', get_class( $wp_filter[ $action ] ) );
-			// verify hook's class & method.
-			$arr = array_shift( $wp_filter[ $action ]->callbacks );
-			// echo "*** "; print_r(array_keys($arr)); .
-			$arr = array_pop( $arr ); // we check the last callback.
-			$arr = array_shift( $arr );
-			$this->assertEquals( get_class( $g ), get_class( $arr[0] ) );
-			$this->assertTrue(
-				method_exists( $arr[0], $arr[1] ),
-				'Missing method ' . $arr[1]
-			);
-
-		}
-
+		$this->actions_testcase( $actions, $g );
 	}
 
 }

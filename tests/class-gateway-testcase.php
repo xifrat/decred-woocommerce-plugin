@@ -2,6 +2,8 @@
 
 namespace Decred\Payments\WooCommerce\Test;
 
+require_once 'class-base-testcase.php';
+
 class Fake_Empty {
 }
 
@@ -33,7 +35,7 @@ class Fake_Gateway extends \Decred\Payments\WooCommerce\Gateway {
 
 }
 
-abstract class Gateway_TestCase extends \WP_UnitTestCase {
+abstract class Gateway_TestCase extends Base_TestCase {
 
 	const MPK = 'tpubVooPRcVnuzBcqypmxFvcU2wfuHDrdq9QB6xHCgwPkGQssALSA2j96HG41EYDzuj1a1taYqMiiMTCF8L4ExtZ1199rNJMdeMcFyPziLf4LmK';
 	

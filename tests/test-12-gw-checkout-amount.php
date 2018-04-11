@@ -11,7 +11,7 @@ class GW_Checkout_Amount extends Gateway_TestCase {
 		$g = $this->gateway;
 
 		$cart_amount = 123.456;
-		$eur_xrate   = `curl -s https://api.coinmarketcap.com/v1/ticker/decred/?convert=EUR | grep price_eur | awk '{ print $2 }' | tr -d '",'`;
+		$eur_xrate   = `curl --silent --insecure https://api.coinmarketcap.com/v1/ticker/decred/?convert=EUR | grep price_eur | awk '{ print $2 }' | tr -d '",'`;
 		$eur_xrate   = trim( $eur_xrate );
 		$dcr_amount  = $cart_amount / $eur_xrate;
 

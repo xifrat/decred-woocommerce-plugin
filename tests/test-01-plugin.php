@@ -5,14 +5,38 @@ namespace Decred\Payments\WooCommerce\Test;
 require_once dirname( __DIR__ ) . '/includes/class-constant.php';
 use Decred\Payments\WooCommerce\Constant;
 
-class Plugin extends \WP_UnitTestCase {
+require_once 'class-base-testcase.php';
+
+class Plugin extends Base_TestCase {
 
 	function test_global_decred_wc_plugin() {
 		global $decred_wc_plugin;
 		$this->assertTrue( isset( $decred_wc_plugin ) );
 		$this->assertEquals( get_class( $decred_wc_plugin ), 'Decred\Payments\WooCommerce\Plugin' );
 	}
+	
+	function test_name() {
+		global $decred_wc_plugin;
+		$this->assertTrue( isset( $decred_wc_plugin->name ) );
+		$this->assertEquals( $decred_wc_plugin->name, plugin_basename( $decred_wc_plugin->file ) );
+	}
 
+	public function test_actions() {
+		global  $decred_wc_plugin;
+	
+		$actions = array(
+			'plugins_loaded',
+			'activate_' . $decred_wc_plugin->name,
+			'woocommerce_payment_gateways',
+			'plugin_action_links_' . $decred_wc_plugin->name,
+			'decred_order_status_updater',
+		);
+
+		$this->actions_testcase( $actions, $decred_wc_plugin );
+		
+		$this->actions_testcase( ['cron_schedules'], $decred_wc_plugin, 3 );
+	}
+	
 	function test_gateway_class_exists() {
 		$this->assertTrue( class_exists( 'Decred\Payments\WooCommerce\Gateway' ) );
 	}
@@ -47,7 +71,15 @@ class Plugin extends \WP_UnitTestCase {
 	function test_plugin_headers_ok() {
 		global $decred_wc_plugin;
 		$plugin_data = get_plugin_data( $decred_wc_plugin->file );
-
 		$this->assertEquals( 'decred', $plugin_data['TextDomain'] );
+	}
+	
+	public function test_add_cron_interval() {
+		$schedules = wp_get_schedules();
+		$this->assertArrayHasKey( 'decred_schedule', $schedules );
+		$schedule = $schedules[ 'decred_schedule' ];
+		$this->assertArrayHasKey( 'interval', $schedule );
+		$interval = $schedule[ 'interval' ];
+		$this->assertEquals( $interval, Constant::CRON_INTERVAL );
 	}
 }
