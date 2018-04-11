@@ -268,7 +268,7 @@ class GW_Checkout extends GW_Base {
 	 *
 	 * @param int $order_id .
 	 */
-	public function woocommerce_new_order( $order_id ) {
+	public function wc_new_order( $order_id ) {
 
 		$fields = [ 'decred_amount', 'decred_refund_address' ];
 
@@ -279,6 +279,10 @@ class GW_Checkout extends GW_Base {
 
 		$value = $this->get_payment_address( $order_id );
 		add_post_meta( $order_id, 'decred_payment_address', $value );
+		
+		if ( ! wp_next_scheduled( 'decred_order_status_updater' ) ) {
+			wp_schedule_event( time(), 'decred_schedule', 'decred_order_status_updater' );
+		}
 	}
 
 	/**

@@ -45,7 +45,7 @@ class GW_Base extends \WC_Payment_Gateway {
 		add_action( 'woocommerce_email_before_order_table', array( $this, 'email_instructions' ), 10, 3 );
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_assets' ) );
 
-		add_action( 'woocommerce_new_order', array( $this, 'woocommerce_new_order' ) );
+		add_action( 'woocommerce_new_order', array( $this, 'wc_new_order' ) );
 
 		add_filter( 'woocommerce_thankyou_order_received_text', array( $this, 'thankyou_order_received_text' ) );
 	}
