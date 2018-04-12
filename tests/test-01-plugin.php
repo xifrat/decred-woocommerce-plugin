@@ -2,9 +2,6 @@
 
 namespace Decred\Payments\WooCommerce\Test;
 
-require_once dirname( __DIR__ ) . '/includes/class-constant.php';
-use Decred\Payments\WooCommerce\Constant;
-
 require_once 'class-base-testcase.php';
 
 class Plugin extends Base_TestCase {
@@ -18,7 +15,7 @@ class Plugin extends Base_TestCase {
 	function test_name() {
 		global $decred_wc_plugin;
 		$this->assertTrue( isset( $decred_wc_plugin->name ) );
-		$this->assertEquals( $decred_wc_plugin->name, plugin_basename( $decred_wc_plugin->file ) );
+		$this->assertEquals( $decred_wc_plugin->name, 'decred-woocommerce-plugin' );
 	}
 
 	public function test_actions() {
@@ -80,6 +77,6 @@ class Plugin extends Base_TestCase {
 		$schedule = $schedules[ 'decred_schedule' ];
 		$this->assertArrayHasKey( 'interval', $schedule );
 		$interval = $schedule[ 'interval' ];
-		$this->assertEquals( $interval, Constant::CRON_INTERVAL );
+		$this->assertEquals( $interval, 30 );
 	}
 }

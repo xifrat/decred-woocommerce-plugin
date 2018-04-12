@@ -53,8 +53,9 @@ class Plugin {
 	 * @param string $file plugin file path.
 	 */
 	public function __construct( $file ) {
-		$this->file        = $file;
-		$this->name        = plugin_basename( $file );
+		$this->file = $file;
+		// plugins' file name without the ".php" suffix.
+		$this->name        = substr( basename( $file ), 0, -4 );
 		$this->operational = false;
 	}
 
@@ -110,7 +111,7 @@ class Plugin {
 	 * Intializations once WooCommerce plugin is loaded.
 	 */
 	public function complete_init() {
-		
+
 		add_filter( 'woocommerce_payment_gateways', [ $this, 'callback_add_payment_method' ] );
 		add_filter( 'plugin_action_links_' . $this->name, [ $this, 'callback_action_links' ] );
 		add_filter( 'cron_schedules', [ $this, 'wp_add_schedule' ] );
@@ -171,13 +172,20 @@ class Plugin {
 		);
 		return $schedules;
 	}
-	
-	public function order_status_updater() { // TODO IMPLEMENT
-		file_put_contents( 
+
+	/**
+	 * Order status updater, to be called by WP-Cron.
+	 *
+	 * At regular intervals (see constant), while there's some unpaid Decred order.
+	 *
+	 *  TODO IMPLEMENT.
+	 */
+	public function order_status_updater() {
+		file_put_contents(
 			'/tmp/order_status_updater.log',
-			'YET ANOTHER LINE ' . date( "Y-m-d", time() ),
+			'YET ANOTHER LINE ' . date( 'Y-m-d', time() ),
 			FILE_APPEND
-			);
+		);
 	}
 
 }

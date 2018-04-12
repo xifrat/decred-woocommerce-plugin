@@ -25,6 +25,9 @@ class GW_Checkout_Amount extends Gateway_TestCase {
 		$this->assertEquals( round( $g->dcr_amount, $precision ), round( $dcr_amount, $precision ) );
 
 		$this->assertEquals( WC()->session->get( 'decred_amount' ), $g->dcr_amount );
+		
+		// yet another CSS styles check
+		$this->assertTrue( wp_style_is( 'decred-1' ) );
 	}
 
 	public function test_dcr_amount_errors() {

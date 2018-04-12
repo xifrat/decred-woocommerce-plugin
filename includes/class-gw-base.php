@@ -27,7 +27,7 @@ class GW_Base extends \WC_Payment_Gateway {
 	public function __construct() {
 		$this->plugin             = $GLOBALS['decred_wc_plugin']; // dependency injection kind of.
 		$this->id                 = Constant::CURRENCY_ID;
-		$this->icon               = plugins_url( Constant::ICON_PATH, $this->plugin->name );
+		$this->icon               = plugins_url( $this->plugin->name . Constant::ICON_PATH );
 		$this->has_fields         = true;
 		$this->method_title       = Constant::CURRENCY_NAME;
 		$this->method_description = __( 'Allows direct payments with the Decred cryptocurrency.', 'decred' );
@@ -43,7 +43,7 @@ class GW_Base extends \WC_Payment_Gateway {
 		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
 		add_action( 'woocommerce_thankyou_' . $this->id, array( $this, 'thankyou_page' ) );
 		add_action( 'woocommerce_email_before_order_table', array( $this, 'email_instructions' ), 10, 3 );
-		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_assets' ) );
+		add_action( 'wp_enqueue_scripts', array( $this, 'wp_enqueue_assets' ) );
 
 		add_action( 'woocommerce_new_order', array( $this, 'wc_new_order' ) );
 
@@ -107,7 +107,7 @@ class GW_Base extends \WC_Payment_Gateway {
 	/**
 	 * Tell WP to include links for required assets in the HTML <head>
 	 */
-	public function enqueue_assets() {
+	public function wp_enqueue_assets() {
 
 		$i      = 1;
 		$handle = 'decred-';
@@ -122,7 +122,7 @@ class GW_Base extends \WC_Payment_Gateway {
 		}
 		*/
 
-		$src = plugins_url( Constant::STYLES_PATH, $this->plugin->name );
+		$src = plugins_url( $this->plugin->name . Constant::STYLES_PATH );
 		wp_enqueue_style( $handle . $i, $src );
 	}
 

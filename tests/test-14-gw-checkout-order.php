@@ -4,9 +4,6 @@ namespace Decred\Payments\WooCommerce\Test;
 
 require_once 'class-gateway-testcase.php';
 
-require_once dirname( __DIR__ ) . '/includes/class-constant.php';
-use Decred\Payments\WooCommerce\Constant;
-
 class GW_Checkout_Order extends Gateway_TestCase {
 
 	public function test_wc_new_order() {
@@ -43,7 +40,7 @@ class GW_Checkout_Order extends Gateway_TestCase {
 		
 		$this->assertArrayHasKey( 'interval', $details );
 		$interval = $details[ 'interval' ];
-		$this->assertEquals( $interval, Constant::CRON_INTERVAL );
+		$this->assertEquals( $interval, 30 );
 	}
 
 }

@@ -2,9 +2,6 @@
 
 namespace Decred\Payments\WooCommerce\Test;
 
-require_once dirname( __DIR__ ) . '/includes/class-constant.php';
-use Decred\Payments\WooCommerce\Constant;
-
 require_once 'class-gateway-testcase.php';
 
 class GW_Base extends Gateway_TestCase {
@@ -26,10 +23,10 @@ class GW_Base extends Gateway_TestCase {
 			$this->assertTrue( isset( $g->$property ) );
 		}
 
-		$this->assertEquals( $g->id, Constant::CURRENCY_ID );
-		$this->assertEquals( $g->icon, plugins_url( Constant::ICON_PATH, dirname( __FILE__ ) ) );
+		$this->assertEquals( $g->id, 'decred' );
+		$this->assertEquals( $g->icon, 'http://example.org/wp-content/plugins/decred-woocommerce-plugin/assets/images/decred_logotext_2.svg' );
 		$this->assertEquals( $g->has_fields, true );
-		$this->assertEquals( $g->method_title, Constant::CURRENCY_NAME );
+		$this->assertEquals( $g->method_title, 'Decred' );
 		$this->assertEquals( $g->method_description, 'Allows direct payments with the Decred cryptocurrency.' );
 		$this->assertEquals( $g->order_button_text, 'Pay with Decred' );
 
@@ -65,6 +62,24 @@ class GW_Base extends Gateway_TestCase {
 			'woocommerce_thankyou_order_received_text',
 		);
 		$this->actions_testcase( $actions, $g );
+
+		/**
+		 * Assets
+		 */
+		
+		// would be better to do_action( 'wp_enqueue_scripts' ) but had issues making it work.
+		$g->wp_enqueue_assets();
+		
+		ob_start();
+		wp_head();
+		$html = ob_get_contents();
+		ob_end_clean();
+		
+		$lines = explode( PHP_EOL, $html );
+		$grep = preg_grep( "/decred-/", $lines );
+		$this->assertNotEmpty( $grep );
+		$grep = preg_grep( '#/assets/styles.css#', $grep );
+		$this->assertNotEmpty( $grep );
 	}
 
 }
