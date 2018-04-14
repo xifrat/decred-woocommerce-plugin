@@ -54,7 +54,6 @@ class GW_Thankyou extends GW_Checkout {
 	 * @param int $order_id .
 	 */
 	public function recover_decred_data( $order_id ) {
-		// Recover DCR amount & payment address saved at checkout time.
 		$this->dcr_amount          = get_post_meta( $order_id, 'decred_amount', true );
 		$this->dcr_payment_address = get_post_meta( $order_id, 'decred_payment_address', true );
 	}

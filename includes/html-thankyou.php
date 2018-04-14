@@ -2,7 +2,7 @@
 /**
  * Part of the "thank you page" that shows after pressing the pay button in the checkout page
  *
- * TODO IMPLEMENT PROPERLY, this just pasted from Magento plugin.
+ * TODO COMPLETE with JavaScript features similar to the Magento plugin.
  */
 
 namespace Decred\Payments\WooCommerce;
