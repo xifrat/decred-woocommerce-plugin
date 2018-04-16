@@ -140,7 +140,7 @@ class GW_Checkout_Addresses extends Gateway_TestCase {
 	private function payment_addr_ok( $index, $address = null ) {
 		$result = $error = '';
 		try {
-			$result = $this->gateway->get_api_payment_address( self::MPK, $index );
+			$result = $this->gateway->get_api_payment_address( self::TEST_MPK, $index );
 		} catch ( \Exception $e ) {
 			$error = $e->getMessage();
 		}
@@ -150,7 +150,7 @@ class GW_Checkout_Addresses extends Gateway_TestCase {
 	private function payment_addr_wrong( $index ) {
 		$address = $error = '';
 		try {
-			$address = $this->gateway->get_api_payment_address( self::MPK, $index );
+			$address = $this->gateway->get_api_payment_address( self::TEST_MPK, $index );
 		} catch ( \Exception $e ) {
 			$error = $e->getMessage();
 		}

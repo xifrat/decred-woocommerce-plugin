@@ -91,6 +91,7 @@ class Plugin {
 		}
 
 		$files = [
+			'class-api-helper.php',
 			'class-constant.php',
 			'class-gw-base.php',
 			'class-gw-checkout.php',
@@ -174,18 +175,15 @@ class Plugin {
 	}
 
 	/**
-	 * Order status updater, to be called by WP-Cron.
-	 *
-	 * At regular intervals (see constant), while there's some unpaid Decred order.
-	 *
-	 *  TODO IMPLEMENT.
+	 * Order status updater: load & execute. To be called by WP-Cron.
 	 */
 	public function order_status_updater() {
-		file_put_contents(
-			'/tmp/order_status_updater.log',
-			'YET ANOTHER LINE ' . date( 'Y-m-d', time() ),
-			FILE_APPEND
-		);
+
+		require_once __DIR__ . '/class-status-updater.php';
+
+		$updater = new Status_Updater();
+
+		$updater->execute();
 	}
 
 }

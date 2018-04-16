@@ -9,7 +9,7 @@ class GW_Checkout_Order extends Gateway_TestCase {
 	public function test_wc_new_order() {
 		
 		$order_id = 2**31 -1;
-		$this->gateway->settings['master_public_key'] = self::MPK;
+		$this->gateway->settings['master_public_key'] = self::TEST_MPK;
 		WC()->session->set( 'decred_amount', 333.7777777 );
 		WC()->session->set( 'decred_refund_address', 'REFUND ADDRESS' );
 		

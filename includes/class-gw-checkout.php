@@ -220,7 +220,7 @@ class GW_Checkout extends GW_Base {
 			$mpk     = $this->settings['master_public_key'];
 			$address = $this->get_api_payment_address( $mpk, $order_id );
 
-		} catch ( \Exception $e ) {
+		} catch ( \Exception $e ) { // TODO log.
 			$address = __( 'ERROR GETTING DECRED ADDRESS', 'decred' );
 		}
 
@@ -296,7 +296,7 @@ class GW_Checkout extends GW_Base {
 		$order = wc_get_order( $order_id );
 
 		if ( $order->get_total() > 0 ) {
-			$order->update_status( 'on-hold', __( 'Awaiting Decred payment', 'decred' ) );
+			$order->update_status( 'pending', __( 'Awaiting Decred payment', 'decred' ) );
 		} else {
 			$order->payment_complete();
 		}
@@ -321,7 +321,7 @@ class GW_Checkout extends GW_Base {
 	 * @param bool     $plain_text .
 	 */
 	public function email_instructions( $order, $sent_to_admin, $plain_text = false ) {
-		if ( $this->instructions && ! $sent_to_admin && 'decred' === $order->get_payment_method() && $order->has_status( 'on-hold' ) ) {
+		if ( $this->instructions && ! $sent_to_admin && 'decred' === $order->get_payment_method() && $order->has_status( 'pending' ) ) {
 			echo wpautop( wptexturize( $this->instructions ) ) . PHP_EOL;
 		}
 	}

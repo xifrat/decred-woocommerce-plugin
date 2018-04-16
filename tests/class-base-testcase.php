@@ -3,6 +3,10 @@
 namespace Decred\Payments\WooCommerce\Test;
 
 abstract class Base_TestCase extends \WP_UnitTestCase {
+
+	const TEST_MPK = 'tpubVooPRcVnuzBcqypmxFvcU2wfuHDrdq9QB6xHCgwPkGQssALSA2j96HG41EYDzuj1a1taYqMiiMTCF8L4ExtZ1199rNJMdeMcFyPziLf4LmK';
+	
+	const MAIN_MPK = 'dpubZFH1kErmwA1ZoDJcqLJ5KHH5kFtBUDVPHFUMQpLaMYCmdWszRFY4nMaZYmn3VK7ewndHrC8D5Hx1pfWSq6jQuMq8NEzmueWMBxqnYUXMgEh';
 	
 	public function actions_testcase( $actions, $object, $callbacks_depth = 1 ) {
 
