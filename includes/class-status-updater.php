@@ -33,6 +33,8 @@ class Status_Updater {
 	 * Run the order status updater.
 	 */
 	public function execute() {
+
+		$this->log( 'StatusUpdater->execute() BEGIN.' );
 		$this->settings = get_option( 'woocommerce_decred_settings', null );
 
 		$args                = [];
@@ -49,106 +51,115 @@ class Status_Updater {
 
 		$query = new \WP_Query( $args );
 		// @codingStandardsIgnoreLine
-		// echo "\nSTATUS UPDATER QUERY: $query->request\n\nFound $query->found_posts orders\n"; // TODO convert to debug log message.
+		//$this->log( "Query: $query->request" );
+
+		if ( 0 == $query->found_posts ) {
+			// TODO unschedule.
+			$this->log( " - no posts.\n" );
+			return;
+		}
+
 		while ( $query->have_posts() ) {
 			$query->the_post();
+			$this->log( 'Processing order ' . $query->post->ID );
 			$order = wc_get_order( $query->post->ID );
 			$this->process_order( $order );
 		}
 
 		wp_reset_postdata();
+
+		$this->log( 'StatusUpdater->execute() END.' );
 	}
 
 	// @codingStandardsIgnoreLine
 	private function process_order( \WC_Order $order ) {
 
-		$order_id               = $order->get_id();
+		$order_id = $order->get_id();
+
+		/*
+		 * Obtain transaction data.
+		 */
+		$mpk = $this->settings['master_public_key'];
+		$api = new API_Helper( $mpk );
+
 		$decred_payment_address = get_post_meta( $order_id, 'decred_payment_address', true );
 
 		$order_created_timestamp = $order->get_date_created()->getTimestamp();
 		$order_created_datetime  = new \DateTime( '@' . $order_created_timestamp );
 
-		$mpk = $this->settings['master_public_key'];
-		$api = new API_Helper( $mpk );
-
 		$transactions = $api->get_transactions( $decred_payment_address, $order_created_datetime );
 
-		if ( $transactions ) {
-			foreach ( $transactions as $transaction ) {
-				$this->process_transaction( $order, $transaction, $decred_payment_address );
-			}
+		// No transactions found for that address yet, skip this order.
+		if ( empty( $transactions ) ) {
+			$this->log( 'No transactions found' );
+			return;
 		}
-	}
 
-	// @codingStandardsIgnoreLine
-	private function process_transaction( \WC_Order $order, Transaction $transaction, $decred_payment_address ) {
-
-		// echo "\n ORDER " . $order->get_id(); 	// @codingStandardsIgnoreLine
-		switch ( $order->get_status() ) {
-			case 'pending':
-				$this->process_pending_order( $order, $transaction, $decred_payment_address );
-				break;
-			case 'on-hold':
-				$this->process_on_hold_order( $order, $transaction, $decred_payment_address );
-				break;
-			default:
-				// This shouldn't happen, behaviour unclear so do nothing. TODO throw exception and/or log.
+		if ( count( $transactions ) != 1 ) {
+			// TODO send notice to merchant & maybe customer, maybe throw exception.
+			$this->log( "ERROR: only one transaction per order supported, order id $order_id" );
+			return;
 		}
-	}
 
-	// @codingStandardsIgnoreLine
-	private function process_pending_order( \WC_Order $order, Transaction $transaction, $decred_payment_address ) {
+		$transaction = $transactions[0];
 
-		$order_id         = $order->get_id();
+		/*
+		 * Verify amounts
+		 */
 		$trans_out_amount = $transaction->getOutAmount( $decred_payment_address );
 		$order_amount     = get_post_meta( $order_id, 'decred_amount', true );
 
 		if ( $trans_out_amount < $order_amount ) {
-			// this shouldn't happen, TODO something, at least throw exception and/or log.
+			// TODO send notice to merchant & maybe customer, maybe throw exception.
+			$this->log( "Order failed: Transaction amount $trans_out_amount less than order amount $order_amount for order id $order_id" );
+			$order->update_status( 'failed', __( 'Received less DCR than expected!.', 'decred' ) );
 			return;
 		}
 
-		$trans_txid     = $transaction->getTxid();
-		$trans_confirms = $transaction->getConfirmations();
-
-		add_post_meta( $order_id, 'txid', $trans_txid );
-		add_post_meta( $order_id, 'confirmations', $trans_confirms );
-
-		$this->update_status( $order, $trans_confirms );
-
 		if ( $trans_out_amount > $order_amount ) {
-			// TODO something, maybe sent email to merchant, at least log.
-			// Might depend on how much more is received. Probably an order note would do.
+			// TODO send notice to merchant & maybe customer.
+			$this->log( "Transaction amount $trans_out_amount more than order amount $order_amount for order id $order_id" );
+			// note we continue.
 		}
-	}
 
-	// @codingStandardsIgnoreLine
-	private function process_on_hold_order( \WC_Order $order, Transaction $transaction ) {
-
-		$order_id   = $order->get_id();
+		/*
+		 * Transaction ID: save or verify if already saved
+		 */
 		$trans_txid = $transaction->getTxid();
 		$order_txid = get_post_meta( $order_id, 'txid', true );
 
-		if ( $trans_txid != $order_txid ) {
-			// echo " TXID DIFER "; // TODO something, at least throw exception and/or log. 	// @codingStandardsIgnoreLine
+		if ( empty( $order_txid ) ) {
+			update_post_meta( $order_id, 'txid', $trans_txid );
+		} elseif ( $trans_txid != $order_txid ) {
+			// TODO maybe throw exception.
+			$this->log( "INTERNAL ERROR: Transaction ID $trans_txid differs from saved previously $order_txid for order id $order_id" );
 			return;
 		}
 
+		/*
+		 * Confirmations: it there are new ones update custom field & continue, otherwise stop here.
+		 */
 		$trans_confirms = $transaction->getConfirmations();
 		$order_confirms = get_post_meta( $order_id, 'confirmations', true );
-
+		if ( empty( $order_confirms ) ) {
+			$order_confirms = 0;
+		}
+		if ( $trans_confirms == $order_confirms ) {
+			$this->log( 'No new confirmations, nothing to do.' );
+			return;
+		}
 		if ( $trans_confirms < $order_confirms ) {
-			// echo " TX CONFIRMS LOW "; // this shouldn't happen, TODO something, at least throw exception and/or log. // @codingStandardsIgnoreLine
+			// TODO maybe throw exception.
+			$this->log( 'INTERNAL ERROR: less confirmations than before!.' );
 			return;
 		}
 
-		if ( $trans_confirms == $order_confirms ) {
-			// echo " NO NEW CONFIRMS "; // TODO log. // @codingStandardsIgnoreLine
-			return; // no new confirmations, nothing to do.
-		}
-
-		// new confirmations.
+		$this->log( "Updating confirmations: where $order_confirms, now are $trans_confirms." );
 		update_post_meta( $order_id, 'confirmations', $trans_confirms );
+
+		/*
+		 * Update status according to the number of new confirmations
+		 */
 
 		$this->update_status( $order, $trans_confirms );
 	}
@@ -157,12 +168,14 @@ class Status_Updater {
 	private function update_status( \WC_Order $order, int $trans_confirms ) {
 
 		$current_status        = $order->get_status();
-		$confirmations_to_wait = $this->settings['confirmations_to_wait'];
+		$confirmations_to_wait = 3; // $this->settings['confirmations_to_wait']; // TODO add to settings 	// @codingStandardsIgnoreLine
 
 		// echo " CFW $confirmations_to_wait TRCF $trans_confirms\n"; // @codingStandardsIgnoreLine
 		if ( $trans_confirms >= $confirmations_to_wait ) {
 			$new_status = 'processing';
 		} else {
+			// should be already on-hold but we allow for others also.
+			// note possible statuses here depend on the query filters.
 			$new_status = 'on-hold';
 		}
 
@@ -173,6 +186,13 @@ class Status_Updater {
 		// status changed, update order.
 		$order->set_status( $new_status );
 		$order->save();
+		$this->log( "status changed from $current_status to $new_status" );
 	}
 
+	// @codingStandardsIgnoreLine
+	private function log( $msg ) {
+		// TODO generic & better.
+		global $decred_wc_plugin;
+		$decred_wc_plugin->tmp_log( $msg );
+	}
 }

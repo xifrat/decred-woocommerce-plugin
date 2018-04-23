@@ -296,7 +296,7 @@ class GW_Checkout extends GW_Base {
 		$order = wc_get_order( $order_id );
 
 		if ( $order->get_total() > 0 ) {
-			$order->update_status( 'pending', __( 'Awaiting Decred payment', 'decred' ) );
+			$order->update_status( 'on-hold', __( 'Awaiting DCR payment.\n', 'decred' ) );
 		} else {
 			$order->payment_complete();
 		}
