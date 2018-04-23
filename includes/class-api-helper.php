@@ -90,10 +90,17 @@ class API_Helper {
 	 */
 	public function get_transactions( $address, $timestamp ) {
 
-		$transactions = $this->get_extended_key()
-			->getNetwork()
-			->getDataClient()
-			->getAddressRaw( $address, $timestamp );
+		try {
+			$transactions = $this->get_extended_key()
+				->getNetwork()
+				->getDataClient()
+				->getAddressRaw( $address, $timestamp );
+
+		} catch ( \Exception $e ) {
+			// TODO catch specific "no transactions yet" exception + different treatment for others
+			// TODO log $e.
+			$transactions = [];
+		}
 
 		return $transactions;
 	}
