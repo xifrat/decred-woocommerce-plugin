@@ -37,10 +37,10 @@ class GW_Checkout_Addresses extends Gateway_TestCase {
 		$this->assertNotRegExp( '/.* validate-required .*/', $html );
 		$this->assertNotRegExp( '/.* class="required".*/', $html );
 	}
-	
+
 	public function test_validate_address() {
 		$g = $this->gateway;
-		
+
 		$tests = [
 			[ null, false ],
 			[ true, false ],
@@ -49,14 +49,14 @@ class GW_Checkout_Addresses extends Gateway_TestCase {
 			[ 'aaabbbccc', false ],
 			[ 'DsrPwFMQW8v4FpHn2BBWiyVm7wr8HUgTcuc', true ],
 		];
-		
+
 		foreach ( $tests as $test ) {
 			$address = $test[0];
 			$result  = $test[1];
 			$this->assertEquals( $g->validate_address( $address ), $result, "Failing test address: $address" );
 		}
 	}
-	
+
 	public function test_validate_refund_address_field() {
 
 		$g = $this->gateway;
@@ -86,9 +86,9 @@ class GW_Checkout_Addresses extends Gateway_TestCase {
 	}
 
 	private function refund_addr_ok( $address ) {
-		
+
 		$notices = $this->validate_refund_addr( $address );
-		
+
 		if ( isset( $notices['error'] ) ) {
 			$error_message = array_pop( $notices['error'] );
 		} else {
@@ -103,40 +103,40 @@ class GW_Checkout_Addresses extends Gateway_TestCase {
 	}
 
 	private function refund_addr_wrong( $address, $notice_portion = 'enter a valid' ) {
-		
+
 		$notices = $this->validate_refund_addr( $address );
-		
+
 		$this->assertArrayHasKey( 'error', $notices );
 		$this->assertTrue( count( $notices['error'] ) > 0 );
 		$last_notice = array_pop( $notices['error'] );
 		$this->assertContains( $notice_portion, $last_notice );
 		$this->assertEmpty( WC()->session->get( 'decred_refund_address' ) );
 	}
-	
+
 	private function validate_refund_addr( $address ) {
 		WC()->session->set( 'wc_notices', null );
 		$_POST['decred-refund-address'] = $address;
 		$this->gateway->validate_refund_address_field();
 		return WC()->session->get( 'wc_notices', [] );
 	}
-	
+
 	public function test_get_payment_address() {
-		
+
 		$this->payment_addr_wrong( null );
 		$this->payment_addr_wrong( 'aaa' );
 		$this->payment_addr_wrong( -123456 );
-		$this->payment_addr_wrong( 2**31 );
+		$this->payment_addr_wrong( 2 ** 31 );
 		$this->payment_addr_wrong( PHP_INT_MAX );
-		$this->payment_addr_wrong( rand( 2**31, PHP_INT_MAX ) );
+		$this->payment_addr_wrong( rand( 2 ** 31, PHP_INT_MAX ) );
 		$this->payment_addr_wrong( rand( -1, -PHP_INT_MAX ) );
-		
+
 		$this->payment_addr_ok( 0, 'TsnhNSGggWVzrLu6nnrcUBFJ8U24aAuH5Av' );
 		$this->payment_addr_ok( 222, 'Tsn3sUmXNPJhGYnVc2pbHRr73e85NQQszBM' );
 		$this->payment_addr_ok( 333, 'TsaDsANo9v8rekPZ9vehVKDUsja1gMhBs1g' );
 		$this->payment_addr_ok( 55555, 'Tsb6hPdLiyTKNjwyVss1mjrTGCzu3iE9JCh' );
-		$this->payment_addr_ok( 2**31 -1, 'TsSAi7gMrMqHnDcAfb4kx6Z7KAepnUApqq8' );
+		$this->payment_addr_ok( 2 ** 31 - 1, 'TsSAi7gMrMqHnDcAfb4kx6Z7KAepnUApqq8' );
 	}
-	
+
 	private function payment_addr_ok( $index, $address = null ) {
 		$result = $error = '';
 		try {
@@ -146,7 +146,7 @@ class GW_Checkout_Addresses extends Gateway_TestCase {
 		}
 		$this->assertEquals( $address, $result, "index: $index addresses: $address -- $result error: $error" );
 	}
-	
+
 	private function payment_addr_wrong( $index ) {
 		$address = $error = '';
 		try {
@@ -156,5 +156,5 @@ class GW_Checkout_Addresses extends Gateway_TestCase {
 		}
 		$this->assertContains( 'index should be', $error, "index: $index address: $address error: $error" );
 	}
-	
+
 }

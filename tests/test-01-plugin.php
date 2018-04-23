@@ -11,7 +11,7 @@ class Plugin extends Base_TestCase {
 		$this->assertTrue( isset( $decred_wc_plugin ) );
 		$this->assertEquals( get_class( $decred_wc_plugin ), 'Decred\Payments\WooCommerce\Plugin' );
 	}
-	
+
 	function test_name() {
 		global $decred_wc_plugin;
 		$this->assertTrue( isset( $decred_wc_plugin->name ) );
@@ -20,7 +20,7 @@ class Plugin extends Base_TestCase {
 
 	public function test_actions() {
 		global  $decred_wc_plugin;
-	
+
 		$actions = array(
 			'plugins_loaded',
 			'activate_' . $decred_wc_plugin->name,
@@ -30,10 +30,10 @@ class Plugin extends Base_TestCase {
 		);
 
 		$this->actions_testcase( $actions, $decred_wc_plugin );
-		
-		$this->actions_testcase( ['cron_schedules'], $decred_wc_plugin, 3 );
+
+		$this->actions_testcase( [ 'cron_schedules' ], $decred_wc_plugin, 3 );
 	}
-	
+
 	function test_gateway_class_exists() {
 		$this->assertTrue( class_exists( 'Decred\Payments\WooCommerce\Gateway' ) );
 	}
@@ -70,13 +70,13 @@ class Plugin extends Base_TestCase {
 		$plugin_data = get_plugin_data( $decred_wc_plugin->file );
 		$this->assertEquals( 'decred', $plugin_data['TextDomain'] );
 	}
-	
+
 	public function test_add_cron_interval() {
 		$schedules = wp_get_schedules();
 		$this->assertArrayHasKey( 'decred_schedule', $schedules );
-		$schedule = $schedules[ 'decred_schedule' ];
+		$schedule = $schedules['decred_schedule'];
 		$this->assertArrayHasKey( 'interval', $schedule );
-		$interval = $schedule[ 'interval' ];
+		$interval = $schedule['interval'];
 		$this->assertEquals( $interval, 30 );
 	}
 }

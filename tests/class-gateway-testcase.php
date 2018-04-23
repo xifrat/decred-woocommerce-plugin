@@ -36,7 +36,7 @@ class Fake_Gateway extends \Decred\Payments\WooCommerce\Gateway {
 }
 
 abstract class Gateway_TestCase extends Base_TestCase {
-	
+
 	public function setUp() {
 		$this->gateway = new Fake_Gateway;
 	}

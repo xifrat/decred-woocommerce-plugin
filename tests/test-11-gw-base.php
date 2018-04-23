@@ -5,7 +5,7 @@ namespace Decred\Payments\WooCommerce\Test;
 require_once 'class-gateway-testcase.php';
 
 class GW_Base extends Gateway_TestCase {
-	
+
 	public function test_constructor() {
 
 		$g = $this->gateway;
@@ -34,7 +34,7 @@ class GW_Base extends Gateway_TestCase {
 		 * Form fields
 		 */
 		// setup form should have these fields.
-		$form_field_names = array( 'enabled', 'master_public_key','title', 'description', 'instructions', 'show_refund_address', 'refund_address_optional' );
+		$form_field_names = array( 'enabled', 'master_public_key', 'title', 'description', 'instructions', 'show_refund_address', 'refund_address_optional' );
 		$num_fields       = count( $form_field_names );
 		$this->assertCount( $num_fields, $g->form_fields );
 
@@ -66,17 +66,17 @@ class GW_Base extends Gateway_TestCase {
 		/**
 		 * Assets
 		 */
-		
+
 		// would be better to do_action( 'wp_enqueue_scripts' ) but had issues making it work.
 		$g->wp_enqueue_assets();
-		
+
 		ob_start();
 		wp_head();
 		$html = ob_get_contents();
 		ob_end_clean();
-		
+
 		$lines = explode( PHP_EOL, $html );
-		$grep = preg_grep( "/decred-/", $lines );
+		$grep  = preg_grep( '/decred-/', $lines );
 		$this->assertNotEmpty( $grep );
 		$grep = preg_grep( '#/assets/styles.css#', $grep );
 		$this->assertNotEmpty( $grep );
