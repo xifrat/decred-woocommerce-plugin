@@ -178,12 +178,18 @@ class Plugin {
 	 * Order status updater: load & execute. To be called by WP-Cron.
 	 */
 	public function order_status_updater() {
-
 		require_once __DIR__ . '/class-status-updater.php';
-
 		$updater = new Status_Updater();
-
 		$updater->execute();
+	}
+
+	// @codingStandardsIgnoreLine
+	public function tmp_log( $msg ) {
+		file_put_contents(
+			'/tmp/order_status_updater.log',
+			date( 'c' ) . " $msg \n",
+			FILE_APPEND
+		);
 	}
 
 }
