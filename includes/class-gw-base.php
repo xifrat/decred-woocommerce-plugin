@@ -61,12 +61,6 @@ class GW_Base extends \WC_Payment_Gateway {
 				'label'   => __( 'Enable Decred direct payments', 'decred' ),
 				'default' => 'no',
 			),
-			'master_public_key'       => array(
-				'title'       => __( 'Master public key', 'decred' ),
-				'type'        => 'text',
-				'description' => __( 'Enter the master public key of the wallet you use to receive payments. Your wallet software should have an option to view it.', 'decred' ),
-				'desc_tip'    => true,
-			),
 			'title'                   => array(
 				'title'       => __( 'Title', 'decred' ),
 				'type'        => 'text',
@@ -74,12 +68,18 @@ class GW_Base extends \WC_Payment_Gateway {
 				'default'     => Constant::CURRENCY_NAME,
 				'desc_tip'    => true,
 			),
-			'instructions'            => array(
-				'title'       => __( 'Instructions', 'decred' ),
-				'type'        => 'textarea',
-				'description' => __( 'Instructions that will be added to the thank you page and emails.', 'decred' ),
-				'default'     => '',
+			'master_public_key'       => array(
+				'title'       => __( 'Master public key', 'decred' ),
+				'type'        => 'text',
+				'description' => __( 'Enter the master public key of the wallet you use to receive payments. Your wallet software should have an option to view it.', 'decred' ),
 				'desc_tip'    => true,
+			),
+			'confirmations_to_wait'   => array(
+				'title'   => __( 'Confirmations to wait', 'decred' ),
+				'type'    => 'text',
+				'description' => __( 'Once this number is reached the order status will be changed to "processing"', 'decred' ),
+				'desc_tip'    => true,
+				'default' => '3',
 			),
 			'show_refund_address'     => array(
 				'title'   => __( 'Show/Hide', 'decred' ),
@@ -92,6 +92,13 @@ class GW_Base extends \WC_Payment_Gateway {
 				'type'    => 'checkbox',
 				'label'   => __( 'Refund address at checkout is optional (if shown)', 'decred' ),
 				'default' => 'yes',
+			),
+			'instructions'            => array(
+				'title'       => __( 'Instructions', 'decred' ),
+				'type'        => 'textarea',
+				'description' => __( 'Instructions that will be added to the thank you page and emails.', 'decred' ),
+				'desc_tip'    => true,
+				'default'     => 'We will send an automated email once we have received your DCR payment.',
 			),
 		);
 	}

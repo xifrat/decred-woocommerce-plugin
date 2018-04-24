@@ -168,7 +168,7 @@ class Status_Updater {
 	private function update_status( \WC_Order $order, int $trans_confirms ) {
 
 		$current_status        = $order->get_status();
-		$confirmations_to_wait = 3; // $this->settings['confirmations_to_wait']; // TODO add to settings 	// @codingStandardsIgnoreLine
+		$confirmations_to_wait = $this->settings['confirmations_to_wait'];
 
 		// echo " CFW $confirmations_to_wait TRCF $trans_confirms\n"; // @codingStandardsIgnoreLine
 		if ( $trans_confirms >= $confirmations_to_wait ) {
