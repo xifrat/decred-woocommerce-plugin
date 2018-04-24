@@ -37,7 +37,6 @@ class GW_Base extends \WC_Payment_Gateway {
 
 		$this->init_settings();
 		$this->title        = $this->settings['title'];
-		$this->description  = $this->settings['description'];
 		$this->instructions = $this->settings['instructions'];
 
 		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
@@ -73,13 +72,6 @@ class GW_Base extends \WC_Payment_Gateway {
 				'type'        => 'text',
 				'description' => __( 'This controls the title which the user sees during checkout.', 'decred' ),
 				'default'     => Constant::CURRENCY_NAME,
-				'desc_tip'    => true,
-			),
-			'description'             => array(
-				'title'       => __( 'Description', 'decred' ),
-				'type'        => 'textarea',
-				'description' => __( 'Payment method description that the customer will see on your checkout.', 'decred' ),
-				'default'     => __( 'Please send some specific Decred amount to the address we provide here.', 'decred' ),
 				'desc_tip'    => true,
 			),
 			'instructions'            => array(
