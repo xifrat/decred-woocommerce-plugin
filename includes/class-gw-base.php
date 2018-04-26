@@ -75,11 +75,11 @@ class GW_Base extends \WC_Payment_Gateway {
 				'desc_tip'    => true,
 			),
 			'confirmations_to_wait'   => array(
-				'title'   => __( 'Confirmations to wait', 'decred' ),
-				'type'    => 'text',
+				'title'       => __( 'Confirmations to wait', 'decred' ),
+				'type'        => 'text',
 				'description' => __( 'Once this number is reached the order status will be changed to "processing"', 'decred' ),
 				'desc_tip'    => true,
-				'default' => '3',
+				'default'     => '3',
 			),
 			'show_refund_address'     => array(
 				'title'   => __( 'Show/Hide', 'decred' ),

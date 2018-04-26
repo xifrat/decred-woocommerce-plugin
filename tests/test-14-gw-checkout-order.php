@@ -20,9 +20,8 @@ class GW_Checkout_Order extends Gateway_TestCase {
 		$this->assertEquals( $all['decred_amount'][0], 333.7777777 );
 		$this->assertEquals( $all['decred_refund_address'][0], 'REFUND ADDRESS' );
 		$this->assertEquals( $all['decred_payment_address'][0], 'TsSAi7gMrMqHnDcAfb4kx6Z7KAepnUApqq8' );
-		
-		// scheduled event
-		
+
+		// scheduled event.
 		$scheduled_events = _get_cron_array();
 		$this->assertNotEmpty( $scheduled_events );
 

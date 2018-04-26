@@ -25,8 +25,8 @@ require_once $file;
  * Manually load the WooCommerce plugin, then the Decred Payments plugin.
  */
 function _manually_load_plugin() {
-	require dirname( dirname( dirname( __FILE__ ) ) ) . '/woocommerce/woocommerce.php';
-	require dirname( dirname( __FILE__ ) ) . '/decred-woocommerce-plugin.php';
+	require dirname( dirname( __DIR__ ) ) . '/woocommerce/woocommerce.php';
+	require dirname( __DIR__ ) . '/decred-woocommerce-plugin.php';
 }
 tests_add_filter( 'muplugins_loaded', '_manually_load_plugin' );
 
