@@ -55,7 +55,7 @@ class Status_Updater {
 
 		if ( 0 == $query->found_posts ) {
 			// TODO unschedule.
-			$this->log( " - no posts.\n" );
+			$this->log( 'No orders waiting for DCR payment.' );
 			return;
 		}
 
@@ -67,8 +67,6 @@ class Status_Updater {
 		}
 
 		wp_reset_postdata();
-
-		$this->log( 'StatusUpdater->execute() END.' );
 	}
 
 	// @codingStandardsIgnoreLine
@@ -104,25 +102,6 @@ class Status_Updater {
 		$transaction = $transactions[0];
 
 		/*
-		 * Verify amounts
-		 */
-		$trans_out_amount = $transaction->getOutAmount( $decred_payment_address );
-		$order_amount     = get_post_meta( $order_id, 'decred_amount', true );
-
-		if ( $trans_out_amount < $order_amount ) {
-			// TODO send notice to merchant & maybe customer, maybe throw exception.
-			$this->log( "Order failed: Transaction amount $trans_out_amount less than order amount $order_amount for order id $order_id" );
-			$order->update_status( 'failed', __( 'Received less DCR than expected!.', 'decred' ) );
-			return;
-		}
-
-		if ( $trans_out_amount > $order_amount ) {
-			// TODO send notice to merchant & maybe customer.
-			$this->log( "Transaction amount $trans_out_amount more than order amount $order_amount for order id $order_id" );
-			// note we continue.
-		}
-
-		/*
 		 * Transaction ID: save or verify if already saved
 		 */
 		$trans_txid = $transaction->getTxid();
@@ -153,40 +132,52 @@ class Status_Updater {
 			$this->log( 'INTERNAL ERROR: less confirmations than before!.' );
 			return;
 		}
-
-		$this->log( "Updating confirmations: where $order_confirms, now are $trans_confirms." );
 		update_post_meta( $order_id, 'confirmations', $trans_confirms );
+		$this->log( "Confirmations updated, before: $order_confirms, after: $trans_confirms." );
+
+		/*
+		 * Verify amounts
+		 */
+		$trans_out_amount = $transaction->getOutAmount( $decred_payment_address );
+		$order_amount     = get_post_meta( $order_id, 'decred_amount', true );
+
+		if ( $trans_out_amount < $order_amount ) {
+			// TODO send notice to merchant & maybe customer, maybe throw exception.
+			$this->log( "Order failed: Transaction amount $trans_out_amount less than order amount $order_amount for order id $order_id" );
+			$order->update_status( 'cancelled', __( 'Received LESS DCR THAN EXPECTED.', 'decred' ) );
+			return;
+		}
 
 		/*
 		 * Update status according to the number of new confirmations
 		 */
-
-		$this->update_status( $order, $trans_confirms );
-	}
-
-	// @codingStandardsIgnoreLine
-	private function update_status( \WC_Order $order, int $trans_confirms ) {
-
 		$current_status        = $order->get_status();
 		$confirmations_to_wait = $this->settings['confirmations_to_wait'];
 
-		// echo " CFW $confirmations_to_wait TRCF $trans_confirms\n"; // @codingStandardsIgnoreLine
 		if ( $trans_confirms >= $confirmations_to_wait ) {
+			$this->log( "More than $confirmations_to_wait confirmations, will change status" );
+			$message = __( 'DCR payment confirmed.', 'decred' );
+			if ( $trans_out_amount > $order_amount ) {
+				// TODO send notice to merchant & maybe customer.
+				$this->log( "Transaction amount $trans_out_amount more than order amount $order_amount for order id $order_id" );
+				$message .= ' ' . __( 'Note that you received MORE DCR THAN EXPECTED.', 'decred' );
+			}
 			$new_status = 'processing';
 		} else {
+			$this->log( "Less than $confirmations_to_wait confirmations, no enough yet." );
 			// should be already on-hold but we allow for others also.
-			// note possible statuses here depend on the query filters.
+			// note possible statuses here depend on the query filters used.
 			$new_status = 'on-hold';
+			$message    = __( 'Awaiting DCR payment.', 'decred' );
 		}
 
 		if ( $new_status == $current_status ) {
-			return; // no change, nothing to update.
+			$this->log( 'No change, nothing to update.' );
+			return;
 		}
 
-		// status changed, update order.
-		$order->set_status( $new_status );
-		$order->save();
-		$this->log( "status changed from $current_status to $new_status" );
+		$order->update_status( $new_status, $message );
+		$this->log( "status changed from $current_status to $new_status." );
 	}
 
 	// @codingStandardsIgnoreLine

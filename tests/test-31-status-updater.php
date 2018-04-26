@@ -38,6 +38,10 @@ class StatusUpdater extends Base_TestCase {
 		// #1 & #2 possibly reserved for minimal default pages.
 		$product = $this->create_product();
 
+		/*
+		 * LOOP ONE: orders 4-5
+		 */
+
 		// MAINNET
 		// add_post_meta( $order->get_id(), 'decred_amount', 0.3 );
 		// add_post_meta( $order->get_id(), 'decred_payment_address', 'Dsj8yaGaJzuchLTuuudqsQ37uxiYCKc99r5' );
@@ -68,18 +72,16 @@ class StatusUpdater extends Base_TestCase {
 
 		$this->create_order( $data, $product );
 
-		/*
-		 * LOOP ONE: orders 4-5
-		 */
+		// RUN UPDATER - 1
 		$decred_wc_plugin->order_status_updater();
 
 		// order 4 cheque no change
 		$order = wc_get_order( 4 );
 		$this->assertEquals( $order->get_status(), 'pending' ); // no change
 
-		// order 5 pending --> processing
+		// order 5 pending --> on-hold (confirmations_to_wait is higher)
 		$order = wc_get_order( 5 );
-		$this->assertEquals( $order->get_status(), 'processing' );
+		$this->assertEquals( $order->get_status(), 'on-hold' );
 
 		$txid = get_post_meta( 5, 'txid', true );
 		$this->assertEquals( $txid, '899da82798f05e8ee6d28ee83b1f12932558263fd736993d2b165b3b842a47ca' );
@@ -88,7 +90,7 @@ class StatusUpdater extends Base_TestCase {
 		// $confirmations = get_post_meta( 5, 'confirmations', true );
 		// $this->assertEquals( $confirmations, $current_confirms );
 		/*
-		 * TWO: orders 4-5-6-7
+		 * LOOP TWO: orders 4-5-6-7
 		 */
 
 		// order #6 with status on-hold should be changed to processing
@@ -114,13 +116,14 @@ class StatusUpdater extends Base_TestCase {
 		$count = $wpdb->get_var( "SELECT COUNT(*) FROM $wpdb->posts" );
 		$this->assertEquals( $count, 7 );
 
-		// no more waiting
+		// no more waiting, now orders should get confirmed
 		$settings['confirmations_to_wait'] = $current_confirms - rand( 0, 2 );
 		update_option( 'woocommerce_decred_settings', $settings );
 
-		// SIMULATE ORDER 5 GETS CONFIRMED
+		// SIMULATE ORDER 5 GETS CONFIRMED by reducing saved confirmations
 		update_post_meta( 5, 'confirmations', $settings['confirmations_to_wait'] - rand( 1, 3 ) );
 
+		// RUN UPDATER - 2
 		$decred_wc_plugin->order_status_updater();
 
 		// order 5 on-hold --> processing
@@ -147,9 +150,9 @@ class StatusUpdater extends Base_TestCase {
 		$order = wc_get_order( 7 );
 		$this->assertEquals( $order->get_status(), 'processing' );
 
-		// order 8 on-hold --> failed (insufficent amount)
+		// order 8 on-hold --> cancelled (insufficent amount)
 		$order = wc_get_order( 8 );
-		$this->assertEquals( $order->get_status(), 'failed' );
+		$this->assertEquals( $order->get_status(), 'cancelled' );
 
 		// order 9 on-hold --> processing (higher amount accepted) // TODO check warning
 		$order = wc_get_order( 9 );
