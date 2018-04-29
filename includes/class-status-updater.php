@@ -39,7 +39,7 @@ class Status_Updater {
 
 		$args                = [];
 		$args['post_type']   = 'shop_order';
-		$args['post_status'] = [ 'wc-pending', 'wc-on-hold' ];
+		$args['post_status'] = [ 'wc-on-hold' ];
 		$args['meta_query']  = [
 			[
 				'key'   => '_payment_method',
@@ -142,9 +142,10 @@ class Status_Updater {
 		$order_amount     = get_post_meta( $order_id, 'decred_amount', true );
 
 		if ( $trans_out_amount < $order_amount ) {
-			// TODO send notice to merchant & maybe customer, maybe throw exception.
-			$this->log( "Order failed: Transaction amount $trans_out_amount less than order amount $order_amount for order id $order_id" );
-			$order->update_status( 'cancelled', __( 'Received LESS DCR THAN EXPECTED.', 'decred' ) );
+			// TODO send notice to merchant, maybe throw exception.
+			$this->log( "Payment failed: Transaction amount $trans_out_amount less than order amount $order_amount for order id $order_id" );
+			$order->update_status( 'pending', __( 'Received LESS DCR THAN EXPECTED.', 'decred' ) );
+			$order->add_order_note( __( 'Order status changed to pending because we received less DCR than expected.', 'decred' ), true );
 			return;
 		}
 
