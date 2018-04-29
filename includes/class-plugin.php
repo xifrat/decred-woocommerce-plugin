@@ -114,7 +114,7 @@ class Plugin {
 	public function complete_init() {
 
 		add_filter( 'woocommerce_payment_gateways', [ $this, 'callback_add_payment_method' ] );
-		add_filter( 'plugin_action_links_' . $this->name, [ $this, 'callback_action_links' ] );
+		add_filter( 'plugin_action_links', [ $this, 'wp_action_links' ] );
 		add_filter( 'cron_schedules', [ $this, 'wp_add_schedule' ] );
 		add_action( 'decred_order_status_updater', [ $this, 'order_status_updater' ] );
 
@@ -141,7 +141,7 @@ class Plugin {
 	 *
 	 * @param array $links links already set by WordPress.
 	 **/
-	public function callback_action_links( $links ) {
+	public function wp_action_links( $links ) {
 		if ( ! $this->operational ) {
 			return $links;
 		}

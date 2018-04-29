@@ -25,7 +25,7 @@ class Plugin extends Base_TestCase {
 			'plugins_loaded',
 			'activate_' . $decred_wc_plugin->name,
 			'woocommerce_payment_gateways',
-			'plugin_action_links_' . $decred_wc_plugin->name,
+			'plugin_action_links',
 			'decred_order_status_updater',
 		);
 
@@ -58,8 +58,7 @@ class Plugin extends Base_TestCase {
 
 	function test_action_links_added() {
 		global $decred_wc_plugin;
-		$hook  = 'plugin_action_links_' . $decred_wc_plugin->name;
-		$links = apply_filters( $hook, array() );
+		$links = apply_filters( 'plugin_action_links', array() );
 		$this->assertTrue( count( $links ) == 2 );
 		$this->assertContains( 'Settings', $links[0] );
 		$this->assertContains( 'Logs', $links[1] );
