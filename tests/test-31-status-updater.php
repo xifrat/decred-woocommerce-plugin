@@ -92,7 +92,6 @@ class StatusUpdater extends Base_TestCase {
 
 		// order #6 with status on-hold should be changed to processing
 		$data['status'] = 'wc-on-hold';
-		$data['txid']   = '899da82798f05e8ee6d28ee83b1f12932558263fd736993d2b165b3b842a47ca';
 		$this->create_order( $data, $product );
 
 		// order #7 with status processing should be skipped
@@ -130,15 +129,16 @@ class StatusUpdater extends Base_TestCase {
 		// TODO review this test
 		// $confirmations = get_post_meta( 5, 'confirmations', true );
 		// $this->assertEquals( $confirmations, $current_confirms );
+		
 		// order 6 on-hold --> processing
 		$order = wc_get_order( 6 );
 		$this->assertEquals( $order->get_status(), 'processing' );
 
-		$txid = get_post_meta( 6, 'txid', true );
-		$this->assertEquals( $txid, '899da82798f05e8ee6d28ee83b1f12932558263fd736993d2b165b3b842a47ca' );
-
-		$confirmations = get_post_meta( 6, 'confirmations', true );
-		$this->assertEquals( $confirmations, $current_confirms );
+		$fields = [
+			'confirmations' => $current_confirms,
+			'txid' => '899da82798f05e8ee6d28ee83b1f12932558263fd736993d2b165b3b842a47ca'
+		];
+		$this->verify_post_meta( 6, $fields );
 
 		// order 7 processing, no change
 		$order = wc_get_order( 7 );

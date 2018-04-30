@@ -15,11 +15,13 @@ class GW_Checkout_Order extends Gateway_TestCase {
 
 		$this->gateway->wc_new_order( $order_id );
 
-		$all = get_post_meta( $order_id );
-
-		$this->assertEquals( $all['decred_amount'][0], 333.7777777 );
-		$this->assertEquals( $all['decred_refund_address'][0], 'REFUND ADDRESS' );
-		$this->assertEquals( $all['decred_payment_address'][0], 'TsSAi7gMrMqHnDcAfb4kx6Z7KAepnUApqq8' );
+		// expected custom fields set and no duplicates
+		$fields = [ 
+			'decred_amount' => 333.7777777, 
+			'decred_refund_address' => 'REFUND ADDRESS',
+			'decred_payment_address' => 'TsSAi7gMrMqHnDcAfb4kx6Z7KAepnUApqq8'
+		];
+		$this->verify_post_meta( $order_id, $fields );
 
 		// scheduled event.
 		$scheduled_events = _get_cron_array();

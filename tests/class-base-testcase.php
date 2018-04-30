@@ -32,5 +32,15 @@ abstract class Base_TestCase extends \WP_UnitTestCase {
 			);
 		}
 	}
+	
+	public function verify_post_meta( $order_id, $fields ) {
+		
+		foreach( $fields as $field => $value ) {
+			$saved_values = get_post_meta( $order_id, $field );
+			$count = count($saved_values);
+			$this->assertTrue( $count == 1, "custom field $field has $count values, shoud be 1." );
+			$this->assertEquals( $value, $saved_values[0],  "custom field $field has value '$saved_values[0]' instead of '$value'.");
+		}
+	}
 
 }
