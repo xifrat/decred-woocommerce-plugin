@@ -79,12 +79,9 @@ class StatusUpdater extends Base_TestCase {
 		$order = wc_get_order( 4 );
 		$this->assertEquals( $order->get_status(), 'pending' ); // no change
 
-		// order 5 pending --> on-hold (confirmations_to_wait is higher)
+		// order 5 pending no change
 		$order = wc_get_order( 5 );
-		$this->assertEquals( $order->get_status(), 'on-hold' );
-
-		$txid = get_post_meta( 5, 'txid', true );
-		$this->assertEquals( $txid, '899da82798f05e8ee6d28ee83b1f12932558263fd736993d2b165b3b842a47ca' );
+		$this->assertEquals( $order->get_status(), 'pending' );
 
 		// TODO review this test
 		// $confirmations = get_post_meta( 5, 'confirmations', true );
@@ -126,12 +123,9 @@ class StatusUpdater extends Base_TestCase {
 		// RUN UPDATER - 2
 		$decred_wc_plugin->order_status_updater();
 
-		// order 5 on-hold --> processing
+		// order 5 pending no change
 		$order = wc_get_order( 5 );
-		$this->assertEquals( $order->get_status(), 'processing' );
-
-		$txid = get_post_meta( 5, 'txid', true );
-		$this->assertEquals( $txid, '899da82798f05e8ee6d28ee83b1f12932558263fd736993d2b165b3b842a47ca' );
+		$this->assertEquals( $order->get_status(), 'pending' );
 
 		// TODO review this test
 		// $confirmations = get_post_meta( 5, 'confirmations', true );
@@ -150,9 +144,9 @@ class StatusUpdater extends Base_TestCase {
 		$order = wc_get_order( 7 );
 		$this->assertEquals( $order->get_status(), 'processing' );
 
-		// order 8 on-hold --> cancelled (insufficent amount)
+		// order 8 on-hold --> pending (insufficent amount)
 		$order = wc_get_order( 8 );
-		$this->assertEquals( $order->get_status(), 'cancelled' );
+		$this->assertEquals( $order->get_status(), 'pending' );
 
 		// order 9 on-hold --> processing (higher amount accepted) // TODO check warning
 		$order = wc_get_order( 9 );
