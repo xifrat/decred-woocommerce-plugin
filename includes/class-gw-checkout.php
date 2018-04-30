@@ -291,7 +291,7 @@ class GW_Checkout extends GW_Base {
 	 * @param int $order_id .
 	 * @return array
 	 */
-	public function process_payment( $order_id ) {
+	public function process_payment( $order_id ) { // TODO TEST (may be difficult)
 
 		$order = wc_get_order( $order_id );
 

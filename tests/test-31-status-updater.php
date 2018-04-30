@@ -119,6 +119,13 @@ class StatusUpdater extends Base_TestCase {
 		// SIMULATE ORDER 5 GETS CONFIRMED by reducing saved confirmations
 		update_post_meta( 5, 'confirmations', $settings['confirmations_to_wait'] - rand( 1, 3 ) );
 
+		/*
+		 * TODO TEST WP-Cron integration. Ideally schedule updater like GW_Checkout->wc_new_order() does.
+		 * Seems complex to setup. Half-way: test by HTTP GET path/to/wordpress/wp-cron.php
+		 *
+		 * First run above can be direct, so it will test the update process itself and this second run would
+		 * test integration with WP-Cron.
+		 */
 		// RUN UPDATER - 2
 		$decred_wc_plugin->order_status_updater();
 

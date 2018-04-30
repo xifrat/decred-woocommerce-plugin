@@ -30,7 +30,7 @@ class Status_Updater {
 	private $settings;
 
 	/**
-	 * Run the order status updater.
+	 * Run the order status updater. TODO TEST complete coverage with all execution paths and error conditions.
 	 */
 	public function execute() {
 
