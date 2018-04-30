@@ -41,7 +41,7 @@ class GW_Checkout_Order extends Gateway_TestCase {
 
 		$this->assertArrayHasKey( 'interval', $details );
 		$interval = $details['interval'];
-		$this->assertEquals( $interval, 30 );
+		$this->assertEquals( $interval, 120 );
 	}
 
 }

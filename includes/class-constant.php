@@ -21,7 +21,7 @@ class Constant {
 	const ICON_PATH   = '/assets/images/decred_logotext_2.svg';
 	const STYLES_PATH = '/assets/styles.css';
 
-	const CRON_INTERVAL = 30;
+	const CRON_INTERVAL = 120;
 
 	/*
 	 * TODO JS features pending

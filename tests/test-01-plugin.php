@@ -76,6 +76,6 @@ class Plugin extends Base_TestCase {
 		$schedule = $schedules['decred_schedule'];
 		$this->assertArrayHasKey( 'interval', $schedule );
 		$interval = $schedule['interval'];
-		$this->assertEquals( $interval, 30 );
+		$this->assertEquals( $interval, 120 );
 	}
 }
