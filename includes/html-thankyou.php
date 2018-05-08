@@ -54,7 +54,7 @@ wp_localize_script('decred-main', 'ajax_action', array(
                 <label><?php echo __( 'Exact amount to send:', 'decred' ); ?></label>
                 <pre class="decred-pay-info-field">
                     <?php require __DIR__ . '/html-dcr-amount.php'; ?>
-                    <i class="decred-icon_copy" data-bind="click: copyAmount"></i>
+                    <i class="decred-icon_copy" data-text="<?php echo $this->dcr_amount; ?>"></i>
                 </pre>
             </div>
 
@@ -62,7 +62,7 @@ wp_localize_script('decred-main', 'ajax_action', array(
                 <label><?php echo __( 'Destination address:', 'decred' ); ?></label>
                 <pre class="decred-pay-info-field">
                     <span><?php echo $this->dcr_payment_address; ?></span>
-                    <i class="decred-icon_copy" data-bind="click: copyAddress"></i>
+                    <i class="decred-icon_copy" data-text="<?php echo $this->dcr_payment_address; ?>"></i>
                 </pre>
             </div>
 
