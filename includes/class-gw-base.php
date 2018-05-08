@@ -111,17 +111,14 @@ class GW_Base extends \WC_Payment_Gateway {
 		$i      = 1;
 		$handle = 'decred-';
 
-		/*
-		 * TODO implement JS features
-		 *
 		foreach( Constant::JS_PATHS as $js_path ) {
-			$src = plugins_url( $js_path, $this->plugin->name );
+			$src = plugins_url( $this->plugin->name . $js_path );
 			wp_enqueue_script( $handle . $i, $src );
 			$i++;
 		}
-		*/
 
 		$src = plugins_url( $this->plugin->name . Constant::STYLES_PATH );
+
 		wp_enqueue_style( $handle . $i, $src );
 	}
 

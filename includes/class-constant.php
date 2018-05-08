@@ -21,6 +21,11 @@ class Constant {
 	const ICON_PATH   = '/assets/images/decred_logotext_2.svg';
 	const STYLES_PATH = '/assets/styles.css';
 
+	const JS_PATHS = [
+        '/assets/qrcode.min.js',
+        '/assets/decred.js',
+	];
+
 	const CRON_INTERVAL = 120;
 
 	/*

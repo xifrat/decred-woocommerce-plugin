@@ -26,6 +26,11 @@ class GW_Thankyou extends GW_Checkout {
 	public $dcr_payment_address;
 
 	/**
+	 * @var string
+	 */
+	public $dcr_code;
+
+	/**
 	 * Add a note to the "order received" text on top of the thankyou page
 	 *
 	 * @param string $text default text WooCommerce shows.
@@ -56,5 +61,7 @@ class GW_Thankyou extends GW_Checkout {
 	public function recover_decred_data( $order_id ) {
 		$this->dcr_amount          = get_post_meta( $order_id, 'decred_amount', true );
 		$this->dcr_payment_address = get_post_meta( $order_id, 'decred_payment_address', true );
+		$query = http_build_query(['amount' => $this->dcr_amount]);
+		$this->dcr_code = sprintf('decred:%s?%s', $this->dcr_payment_address, $query);
 	}
 }
