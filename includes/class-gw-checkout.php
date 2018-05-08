@@ -270,19 +270,12 @@ class GW_Checkout extends GW_Base {
 	 */
 	public function wc_new_order( $order_id ) {
 
-		$fields = [ 'decred_amount', 'decred_refund_address' ];
+		add_post_meta( $order_id, 'decred_amount', WC()->session->get( 'decred_amount' ) );
 
-		foreach ( $fields as $field ) {
-			$value = WC()->session->get( $field );
-			add_post_meta( $order_id, $field, $value );
-		}
+		add_post_meta( $order_id, 'decred_refund_address', WC()->session->get( 'decred_refund_address' ) );
 
-		$value = $this->get_payment_address( $order_id );
-		add_post_meta( $order_id, 'decred_payment_address', $value );
+		add_post_meta( $order_id, 'decred_payment_address', $this->get_payment_address( $order_id ) );
 
-		if ( ! wp_next_scheduled( 'decred_order_status_updater' ) ) {
-			wp_schedule_event( time(), 'decred_schedule', 'decred_order_status_updater' );
-		}
 	}
 
 	/**

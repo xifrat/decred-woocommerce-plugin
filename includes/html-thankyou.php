@@ -9,6 +9,18 @@ namespace Decred\Payments\WooCommerce;
 
 defined( 'ABSPATH' ) || exit;  // prevent direct URL execution.
 
+wp_enqueue_script( 'decred-qrcode', plugins_url( $this->plugin->name  . Constant::JS_PATH_QRCODE ) );
+
+wp_enqueue_script( 'decred-main', 	plugins_url( $this->plugin->name  . Constant::JS_PATH_MAIN ) );
+
+/**
+ * Ajax request for retrieving order status update.
+ */
+wp_localize_script('decred-main', 'ajax_action', array(
+    'url' => admin_url('admin-ajax.php'),
+    'nonce' => wp_create_nonce('ajaxnonce')
+));
+
 /** @var GW_Thankyou $this */
 ?>
 
@@ -20,11 +32,15 @@ defined( 'ABSPATH' ) || exit;  // prevent direct URL execution.
 		<img src="<?php echo $this->icon; ?>" width="153" height="28">
 	</div>
 	<div class="decred-pay-content">
+        <input type="hidden" id="decred-order-id" value="<?php echo $order_id ?>" />
+        <input type="hidden" id="decred-order-status" value="<?php echo $this->dcr_order_status ?>" />
 		<div class="decred-pay-qrcode" id="decred-qrcode" data-code="<?php echo $this->dcr_code; ?>"></div>
 		<div class="decred-pay-info">
             <div class="decred-pay-row decred-pay-row_head">
                 <span>Send exact amount to the address:</span>
-                <button class="decred-pay-status decred-pay-status__paid"><i class="decred-icon_confirmed">&#10003;</i>Confirmed</button>
+                <button class="decred-pay-status decred-pay-status__paid" <?php echo $this->dcr_order_status !== 3 ? 'style="display: none"' : ''; ?>><i class="decred-icon_confirmed">&#10003;</i>Confirmed</button>
+                <button class="decred-pay-status decred-pay-status__processing" <?php echo $this->dcr_order_status !== 2 ? 'style="display: none"' : ''; ?>><i class="decred-icon_dots">...</i>Processing</button>
+                <button class="decred-pay-status decred-pay-status__pending" <?php echo $this->dcr_order_status !== 1 ? 'style="display: none"' : ''; ?>><i class="decred-icon_dots">...</i>Pending</button>
             </div>
 
             <?php

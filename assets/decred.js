@@ -13,7 +13,6 @@
           var $decredPay = $('.decred-pay');
           var decredClass = sizeClasses[0];
           var width = $decredPay.width();
-            console.log(width);
           Object.keys(sizeClasses).forEach(function(size) {
             if (width >= size) {
               decredClass = sizeClasses[size];
@@ -41,6 +40,50 @@
 
         updateComponentResponsiveClasses();
 
+        /**
+         * Order status update
+         */
+
+        var orderId = $('#decred-order-id').val();
+        var orderStatus = parseInt($('#decred-order-status').val());
+
+        var updateOrderStatusRequest = function() {
+            $.ajax({
+                type: 'get',
+                url: ajax_action.url,
+                data: 'action=decred_order_status&order_id=' + orderId,
+                success: function (response) {
+                    var status = parseInt(response);
+
+                    if (status > 0 && orderStatus !== status) {
+                        orderStatus = status;
+
+                        $('.decred-pay-status').hide();
+
+                        if (orderStatus === 1) {
+                            $('.decred-pay-status__pending').show();
+                        }
+
+                        if (orderStatus === 2) {
+                            $('.decred-pay-status__processing').show();
+                        }
+
+                        if (orderStatus === 3) {
+                            $('.decred-pay-status__paid').show();
+                        }
+                    }
+                }
+            });
+        };
+
+        var updateOrder = function() {
+            if (orderStatus !== 3) {
+                updateOrderStatusRequest();
+                setTimeout(updateOrder, 5000);
+            }
+        };
+
+        updateOrder();
     });
 
 })(jQuery);

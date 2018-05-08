@@ -25,7 +25,7 @@
   padding: 30px 40px;
   margin-bottom: 20px; }
   .decred-pay .decred-pay-header {
-    height: 85px; }
+    height: 70px; }
   .decred-pay .decred-pay-content::after {
     content: "";
     display: table;
@@ -44,7 +44,7 @@
     float: right;
     height: 40px;
     margin-top: -5px;
-    margin-left: 120px;
+    margin-left: 92px;
     color: #2f74fb;
     font-family: 'Source Sans Pro', sans-serif;
     font-weight: normal;

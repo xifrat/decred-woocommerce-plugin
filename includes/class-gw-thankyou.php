@@ -30,6 +30,24 @@ class GW_Thankyou extends GW_Checkout {
 	 */
 	public $dcr_code;
 
+	public $dcr_order_status;
+
+	static public function getDecredOrderStatus( $order_id )
+	{
+		if ( ! ( $confirmations = get_post_meta( $order_id, 'decred_confirmations' ) ) ) {
+			return 1; // Pending
+		}
+
+		$settings = get_option( 'woocommerce_decred_settings', [] );
+		$confirmations_to_wait = (int) $settings['confirmations_to_wait'] ?: 6;
+
+		if ( $confirmations < $confirmations_to_wait) {
+            return 2; // Processing
+		}
+
+        return 3; // Success
+	}
+
 	/**
 	 * Add a note to the "order received" text on top of the thankyou page
 	 *
@@ -63,5 +81,6 @@ class GW_Thankyou extends GW_Checkout {
 		$this->dcr_payment_address = get_post_meta( $order_id, 'decred_payment_address', true );
 		$query = http_build_query(['amount' => $this->dcr_amount]);
 		$this->dcr_code = sprintf('decred:%s?%s', $this->dcr_payment_address, $query);
+		$this->dcr_order_status = static::getDecredOrderStatus( $order_id );
 	}
 }
