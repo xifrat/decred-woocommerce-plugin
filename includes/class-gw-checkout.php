@@ -22,13 +22,6 @@ require_once __DIR__ . '/class-constant.php';
 class GW_Checkout extends GW_Base {
 
 	/**
-	 * DCR amount to show in checkout & thankyou pages.
-	 *
-	 * @var float dcr_amount
-	 */
-	public $dcr_amount;
-
-	/**
 	 * Show refund address in checkout page?
 	 */
 	public function show_refund_address() {
@@ -66,10 +59,10 @@ class GW_Checkout extends GW_Base {
 
 		try {
 
-			$this->dcr_amount = $this->get_dcr_amount();
+			$dcr_amount = $this->get_dcr_amount();
 
 			// save amount now to retrieve it later when order created.
-			WC()->session->set( 'decred_amount', $this->dcr_amount );
+			WC()->session->set( 'decred_amount', $dcr_amount );
 
 			require __DIR__ . '/html-checkout.php';
 
@@ -276,6 +269,10 @@ class GW_Checkout extends GW_Base {
 
 		add_post_meta( $order_id, 'decred_payment_address', $this->get_payment_address( $order_id ) );
 
+		if ( ! wp_next_scheduled( 'decred_order_status_updater' ) ) {
+			wp_schedule_event( time(), 'decred_schedule', 'decred_order_status_updater' );
+		}
+
 	}
 
 	/**
@@ -288,9 +285,7 @@ class GW_Checkout extends GW_Base {
 
 		$order = wc_get_order( $order_id );
 
-		if ( $order->get_total() > 0 ) {
-			$order->update_status( 'on-hold', __( 'Awaiting DCR payment.', 'decred' ) );
-		} else {
+		if ( $order->get_total() == 0 ) {
 			$order->payment_complete();
 		}
 

@@ -186,31 +186,26 @@ class Plugin {
 		$updater->execute();
 	}
 
+	/**
+	 * Aja order status
+	 */
 	public function ajax_order_status()
 	{
-		$result = 0;
+		$result = [];
 
+		/** @var \WC_Order $order */
+		/** @var \WP_User $user */
 		if (isset($_GET['order_id']) && is_numeric($_GET['order_id']))  {
-
-			/** @var \WC_Order $order */
 			$order = wc_get_order( $_GET['order_id'] );
-
-			/** @var \WP_User $user */
 			$user = wp_get_current_user();
 
 			if ( $order->get_user_id() === $user->ID ) {
-
-				$result = GW_Thankyou::getDecredOrderStatus( $order->get_id() );
-
+				$result['status'] = $order->get_status();
+				$result['txid'] = get_post_meta( $order->get_id(), 'txid', true );
 			}
-
 		}
 
-		if ( ! wp_next_scheduled( 'decred_order_status_updater' ) ) {
-			wp_schedule_event( time(), 'decred_schedule', 'decred_order_status_updater' );
-		}
-
-		echo $result;
+		echo json_encode($result);
 		exit;
 	}
 

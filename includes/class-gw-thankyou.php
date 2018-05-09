@@ -19,36 +19,6 @@ defined( 'ABSPATH' ) || exit;  // prevent direct URL execution.
 class GW_Thankyou extends GW_Checkout {
 
 	/**
-	 * DCR paymnent address to show in thankyou page.
-	 *
-	 * @var string dcr_payment_address
-	 */
-	public $dcr_payment_address;
-
-	/**
-	 * @var string
-	 */
-	public $dcr_code;
-
-	public $dcr_order_status;
-
-	static public function getDecredOrderStatus( $order_id )
-	{
-		if ( ! ( $confirmations = get_post_meta( $order_id, 'decred_confirmations' ) ) ) {
-			return 1; // Pending
-		}
-
-		$settings = get_option( 'woocommerce_decred_settings', [] );
-		$confirmations_to_wait = (int) $settings['confirmations_to_wait'] ?: 6;
-
-		if ( $confirmations < $confirmations_to_wait) {
-            return 2; // Processing
-		}
-
-        return 3; // Success
-	}
-
-	/**
 	 * Add a note to the "order received" text on top of the thankyou page
 	 *
 	 * @param string $text default text WooCommerce shows.
@@ -66,21 +36,18 @@ class GW_Thankyou extends GW_Checkout {
 	 */
 	public function thankyou_page( $order_id ) {
 
-		$this->recover_decred_data( $order_id );
+		/** @var \WC_Order $order */
+		$order = wc_get_order( $order_id );
+
+		$dcr_order_status 		= $order->get_status();
+		$dcr_payment_address 	= get_post_meta( $order_id, 'decred_payment_address', true );
+		$dcr_amount 			= get_post_meta( $order_id, 'decred_amount', true );
+		$dcr_txid 				= get_post_meta( $order_id, 'txid', true );
+
+		$dcr_code = sprintf('decred:%s?%s', $dcr_payment_address, http_build_query([
+			'amount' => $dcr_amount,
+		]));
 
 		require __DIR__ . '/html-thankyou.php';
-	}
-
-	/**
-	 * Recover Decred data saved to DB at checkout time
-	 *
-	 * @param int $order_id .
-	 */
-	public function recover_decred_data( $order_id ) {
-		$this->dcr_amount          = get_post_meta( $order_id, 'decred_amount', true );
-		$this->dcr_payment_address = get_post_meta( $order_id, 'decred_payment_address', true );
-		$query = http_build_query(['amount' => $this->dcr_amount]);
-		$this->dcr_code = sprintf('decred:%s?%s', $this->dcr_payment_address, $query);
-		$this->dcr_order_status = static::getDecredOrderStatus( $order_id );
 	}
 }

@@ -39,7 +39,7 @@ class Status_Updater {
 
 		$args                = [];
 		$args['post_type']   = 'shop_order';
-		$args['post_status'] = [ 'wc-on-hold' ];
+		$args['post_status'] = [ 'wc-pending', 'wc-on-hold' ];
 		$args['meta_query']  = [
 			[
 				'key'   => '_payment_method',

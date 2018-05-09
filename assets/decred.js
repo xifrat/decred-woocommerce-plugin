@@ -66,8 +66,8 @@
 
         new QRCode(document.getElementById('decred-qrcode'), {
             text: $('#decred-qrcode').attr('data-code'),
-            width: 200,
-            height: 200,
+            width: 250,
+            height: 250,
             correctLevel : QRCode.CorrectLevel.M
         });
 
@@ -85,41 +85,41 @@
          */
 
         var orderId = $('#decred-order-id').val();
-        var orderStatus = parseInt($('#decred-order-status').val());
+        var orderStatus = $('#decred-order-status').val();
+        var orderTxid = $('#decred-order-txid').val();
 
         var updateOrderStatusRequest = function() {
             $.ajax({
                 type: 'get',
                 url: ajax_action.url,
+                dataType: 'json',
                 data: 'action=decred_order_status&order_id=' + orderId,
                 success: function (response) {
-                    var status = parseInt(response);
-
-                    if (status > 0 && orderStatus !== status) {
-                        orderStatus = status;
-
-                        $('.decred-pay-status').hide();
-
-                        if (orderStatus === 1) {
-                            $('.decred-pay-status__pending').show();
-                        }
-
-                        if (orderStatus === 2) {
-                            $('.decred-pay-status__processing').show();
-                        }
-
-                        if (orderStatus === 3) {
-                            $('.decred-pay-status__paid').show();
-                        }
+                    if (response.status && orderStatus !== response.status) {
+                        orderStatus = response.status;
+                        $('.decred-pay-status__pending').toggle(orderStatus === 'pending');
+                        $('.decred-pay-status__on-hold').toggle(orderStatus === 'on-hold');
+                        $('.decred-pay-status__processing').toggle(orderStatus === 'processing');
                     }
+
+                    if (response.txid && response.txid !== orderTxid) {
+                        orderTxid = response.txid;
+
+                        $('.decred-pay-row__txid')
+                            .find('.decred-pay-info-field span').text(orderTxid).end()
+                            .find('.decred-pay-info-field i').attr('data-text', orderTxid).end()
+                            .show();
+
+                    }
+
                 }
             });
         };
 
         var updateOrder = function() {
-            if (orderStatus !== 3) {
+            if (orderStatus !== 'processing') {
                 updateOrderStatusRequest();
-                setTimeout(updateOrder, 5000);
+                setTimeout(updateOrder, 10000);
             }
         };
 

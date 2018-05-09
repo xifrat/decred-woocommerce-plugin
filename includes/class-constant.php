@@ -24,7 +24,7 @@ class Constant {
 	const JS_PATH_QRCODE = '/assets/qrcode.min.js';
 	const JS_PATH_MAIN = '/assets/decred.js';
 
-	const CRON_INTERVAL = 120;
+	const CRON_INTERVAL = 60;
 
 	/*
 	 * TODO JS features pending

@@ -3,8 +3,9 @@
  * Show the DCR amount with a special format of smaller digits after the third decimal digit
  */
 
-$big_digits   = floor( $this->dcr_amount * 100 ) / 100;
-$small_digits = sprintf( '%01.7f', round( $this->dcr_amount - $big_digits, 7 ) );
+/** @var float $dcr_amount $big_digits */
+$big_digits   = floor( $dcr_amount * 100 ) / 100;
+$small_digits = sprintf( '%01.7f', round( $dcr_amount - $big_digits, 7 ) );
 $small_digits = substr( $small_digits, 4, 5 );
 
 ?>

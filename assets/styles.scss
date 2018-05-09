@@ -23,7 +23,7 @@ $red: #fd714b;
       font-size: 20px;
     }
     &__small {
-      font-size: 16px;
+      font-size: 14px;
     }
   }
 }
@@ -33,7 +33,6 @@ $red: #fd714b;
   box-shadow: 0 1px 5px 0.1px rgba(0, 0, 0, 0.1);
   font-size: 19px;
   color: $dark-light;
-  max-width: 960px;
   width: 100%;
 
   background-color: #ffffff;
@@ -58,15 +57,21 @@ $red: #fd714b;
   }
 
   .decred-pay-qrcode {
-    display: inline-block;
-    float: left;
+    display: block;
+    float: none;
+    width: 100%;
+    text-align: center;
+    margin-bottom: 20px;
+
+    img {
+      display: inline-block !important;
+    }
   }
 
-  .decred-pay-info {
-    display: inline-block;
-    float: left;
-    padding-left: 25px;
-  }
+  // .decred-pay-qrcode {
+  //   display: inline-block;
+  //   float: left;
+  // }
 
   .decred-pay-status {
     cursor: auto;
@@ -85,12 +90,12 @@ $red: #fd714b;
     background-color: #ffffff;
 
     &__pending {}
-    &__processing {
+    &__on-hold {
       border-color: $green;
       color: $green;
       margin-left: 75px;
     }
-    &__paid {
+    &__processing {
       border-color: $green;
       color: $green;
       margin-left: 75px;
@@ -124,7 +129,7 @@ $red: #fd714b;
       white-space: normal;
       min-height: 25px;
       border: solid 1px #c4cbd2;
-      padding: 11px 30px 10px 20px;
+      padding: 11px 35px 10px 20px;
       margin: 0;
 
       .decred-icon_copy {
@@ -163,17 +168,6 @@ $red: #fd714b;
       display: block;
       padding-left: 0;
       width: 100%;
-    }
-    .decred-pay-qrcode {
-      display: block;
-      float: none;
-      width: 100%;
-      text-align: center;
-      margin-bottom: 20px;
-
-      img {
-        display: inline-block !important;
-      }
     }
   }
   &__small {
