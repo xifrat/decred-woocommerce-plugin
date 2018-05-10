@@ -116,7 +116,10 @@ class Plugin {
 		add_filter( 'woocommerce_payment_gateways', [ $this, 'callback_add_payment_method' ] );
 		add_filter( 'plugin_action_links', [ $this, 'wp_action_links' ] );
 		add_filter( 'cron_schedules', [ $this, 'wp_add_schedule' ] );
+
 		add_action( 'decred_order_status_updater', [ $this, 'order_status_updater' ] );
+
+		add_action( 'wp_ajax_decred_order_status', [ $this, 'ajax_order_status']);
 
 		$this->logger      = new \WC_Logger();
 		$this->operational = true;
@@ -181,6 +184,29 @@ class Plugin {
 		require_once __DIR__ . '/class-status-updater.php';
 		$updater = new Status_Updater();
 		$updater->execute();
+	}
+
+	/**
+	 * Aja order status
+	 */
+	public function ajax_order_status()
+	{
+		$result = [];
+
+		/** @var \WC_Order $order */
+		/** @var \WP_User $user */
+		if (isset($_GET['order_id']) && is_numeric($_GET['order_id']))  {
+			$order = wc_get_order( $_GET['order_id'] );
+			$user = wp_get_current_user();
+
+			if ( $order->get_user_id() === $user->ID ) {
+				$result['status'] = $order->get_status();
+				$result['txid'] = get_post_meta( $order->get_id(), 'txid', true );
+			}
+		}
+
+		echo json_encode($result);
+		exit;
 	}
 
 	// @codingStandardsIgnoreLine

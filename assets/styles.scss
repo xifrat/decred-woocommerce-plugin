@@ -1,0 +1,189 @@
+@import url('https://fonts.googleapis.com/css?family=Inconsolata');
+@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro');
+
+$dark: #0c1e3e;
+$dark-light: #596d81;
+$blue: #2f74fb;
+$green: #2dd6a1;
+$red: #fd714b;
+
+.decred-icon_copy {
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAAQCAYAAADwMZRfAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAA3XAAAN1wFCKJt4AAAAB3RJTUUH4gIaAB4NeMy30AAAAJNJREFUOMvNkrENgzAQRd9ZDEFGsNiCDdJmA3d4kaRjAvZgDMQEMIWPhjSR7WBBwWttv/M/fSGC9foEeqAmz4riqsRhH4TX/JYxZ2g6bYMwkPiJchDrVQ0XUP3mnz4ixZKj+XMYoD4j+EpOc3/J2nTa/nu831nijVVcEAbr9ZGTBFgEXFE7L9lJaqApzR9vbGn+CBsRQzp+ZpYkgAAAAABJRU5ErkJggg==');
+  display: block;
+  width: 17px;
+  height: 16px;
+}
+
+.decred-price {
+  font-family: "Inconsolata", monospace;
+  font-size: 0;
+
+  & .decred-amount {
+    &__big {
+      font-size: 20px;
+    }
+    &__small {
+      font-size: 14px;
+    }
+  }
+}
+
+.decred-pay {
+  font-family: 'Source Sans Pro', sans-serif;
+  box-shadow: 0 1px 5px 0.1px rgba(0, 0, 0, 0.1);
+  font-size: 19px;
+  color: $dark-light;
+  width: 100%;
+
+  background-color: #ffffff;
+  padding: 30px 40px;
+  margin-bottom: 20px;
+
+  .decred-pay-header {
+    height: 70px;
+
+    img {
+      // margin: 36px 0 36px 35px;
+    }
+  }
+
+  .decred-pay-content {
+
+    &::after {
+      content: "";
+      display: table;
+      clear: both;
+    }
+  }
+
+  .decred-pay-qrcode {
+    display: block;
+    float: none;
+    width: 100%;
+    text-align: center;
+    margin-bottom: 20px;
+
+    img {
+      display: inline-block !important;
+    }
+  }
+
+  // .decred-pay-qrcode {
+  //   display: inline-block;
+  //   float: left;
+  // }
+
+  .decred-pay-status {
+    cursor: auto;
+    border: 1px solid $blue;
+    border-radius: 4px;
+    float: right;
+
+    height: 40px;
+    margin-top: -5px;
+    margin-left: 92px;
+
+    color: $blue;
+    font-family: 'Source Sans Pro', sans-serif;
+    font-weight: normal;
+    font-size: 15px;
+    background-color: #ffffff;
+
+    &__pending {}
+    &__on-hold {
+      border-color: $green;
+      color: $green;
+      margin-left: 75px;
+    }
+    &__processing {
+      border-color: $green;
+      color: $green;
+      margin-left: 75px;
+    }
+
+    .decred-icon_confirmed {
+      margin-right: 8px;
+    }
+
+    .decred-icon_dots {
+      float: left;
+      display: inline-block;
+      margin: -4px 8px 0 0;
+    }
+  }
+
+  .decred-pay-row {
+
+    label {
+      color: $dark;
+      display: block;
+      margin-bottom: 6px;
+      font-size: 16px;
+    }
+
+    .decred-pay-info-field {
+      position: relative;
+      font-family: "Inconsolata", monospace;
+      font-size: 16px;
+      background-color: #ffffff;
+      white-space: normal;
+      min-height: 25px;
+      border: solid 1px #c4cbd2;
+      padding: 11px 35px 10px 20px;
+      margin: 0;
+
+      .decred-icon_copy {
+        cursor: pointer;
+
+        position: absolute;
+        top: 14px;
+        right: 10px;
+      }
+    }
+
+    & + .decred-pay-row {
+      margin-top: 8px;
+    }
+
+    &__amount {
+      .decred-pay-info-field {
+        padding-top: 7px;
+        padding-bottom: 7px;
+        min-height: 30px;
+        .decred-icon_copy {
+          // top: 15px;
+        }
+      }
+    }
+
+    &::after {
+      content: "";
+      display: table;
+      clear: both;
+    }
+  }
+
+  &__medium, &__small {
+    .decred-pay-info {
+      display: block;
+      padding-left: 0;
+      width: 100%;
+    }
+  }
+  &__small {
+    .decred-pay-header img {
+      margin-left: 20px;
+    }
+    .decred-pay-content {
+      padding: 0 20px 20px 20px;
+    }
+    .decred-pay-row_head > span {
+      display: block;
+    }
+    .decred-pay-status {
+      display: block;
+      float: left;
+      margin: 10px 0;
+    }
+  }
+}

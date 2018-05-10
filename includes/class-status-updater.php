@@ -39,7 +39,7 @@ class Status_Updater {
 
 		$args                = [];
 		$args['post_type']   = 'shop_order';
-		$args['post_status'] = [ 'wc-on-hold' ];
+		$args['post_status'] = [ 'wc-pending', 'wc-on-hold' ];
 		$args['meta_query']  = [
 			[
 				'key'   => '_payment_method',
@@ -119,7 +119,7 @@ class Status_Updater {
 		 * Confirmations: it there are new ones update custom field & continue, otherwise stop here.
 		 */
 		$trans_confirms = $transaction->getConfirmations();
-		$order_confirms = get_post_meta( $order_id, 'confirmations', true );
+		$order_confirms = get_post_meta( $order_id, 'decred_confirmations', true );
 		if ( empty( $order_confirms ) ) {
 			$order_confirms = 0;
 		}
@@ -132,7 +132,7 @@ class Status_Updater {
 			$this->log( 'INTERNAL ERROR: less confirmations than before!.' );
 			return;
 		}
-		update_post_meta( $order_id, 'confirmations', $trans_confirms );
+		update_post_meta( $order_id, 'decred_confirmations', $trans_confirms );
 		$this->log( "Confirmations updated, before: $order_confirms, after: $trans_confirms." );
 
 		/*

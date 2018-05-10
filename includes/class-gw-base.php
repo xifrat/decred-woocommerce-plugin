@@ -79,7 +79,7 @@ class GW_Base extends \WC_Payment_Gateway {
 				'type'        => 'text',
 				'description' => __( 'Once this number is reached the order status will be changed to "processing"', 'decred' ),
 				'desc_tip'    => true,
-				'default'     => '3',
+				'default'     => '6',
 			),
 			'show_refund_address'     => array(
 				'title'   => __( 'Show/Hide', 'decred' ),
@@ -108,21 +108,8 @@ class GW_Base extends \WC_Payment_Gateway {
 	 */
 	public function wp_enqueue_assets() {
 
-		$i      = 1;
-		$handle = 'decred-';
+		wp_enqueue_style( 'decred-styles', 	plugins_url( $this->plugin->name . Constant::STYLES_PATH ) );
 
-		/*
-		 * TODO implement JS features
-		 *
-		foreach( Constant::JS_PATHS as $js_path ) {
-			$src = plugins_url( $js_path, $this->plugin->name );
-			wp_enqueue_script( $handle . $i, $src );
-			$i++;
-		}
-		*/
-
-		$src = plugins_url( $this->plugin->name . Constant::STYLES_PATH );
-		wp_enqueue_style( $handle . $i, $src );
 	}
 
 }
