@@ -46,7 +46,6 @@ abstract class Gateway_TestCase extends Base_TestCase {
 		call_user_func( [ $this->gateway, $callback ], $param );
 		$html = ob_get_contents();
 		ob_end_clean();
-		// echo $html; .
 		return $html;
 	}
 

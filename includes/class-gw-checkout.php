@@ -45,7 +45,10 @@ class GW_Checkout extends GW_Base {
 	 * @throws \Exception Possible diverse errors from decred-php-api.
 	 */
 	public function convert_to_dcr( $currency, $amount ) {
-		return \Decred\Rate\CoinMarketCap::getRate( $currency )->convertToCrypto( $amount );
+		$dcr_amount = \Decred\Rate\CoinMarketCap::getRate( $currency )->convertToCrypto( $amount );
+		// API may return more precision but we only use 7 decimal digits
+		$dcr_amount = round( $dcr_amount, 7 );
+		return $dcr_amount;
 	}
 
 	/**

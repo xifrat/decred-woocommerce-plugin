@@ -2,6 +2,12 @@
 
 namespace Decred\Payments\WooCommerce\Test;
 
+class Dummy_Gateway extends \WC_Payment_Gateway {
+	public function __construct( $id ) {
+		$this->id = $id;
+	}
+}
+
 abstract class Base_TestCase extends \WP_UnitTestCase {
 
 	const TEST_MPK = 'tpubVooPRcVnuzBcqypmxFvcU2wfuHDrdq9QB6xHCgwPkGQssALSA2j96HG41EYDzuj1a1taYqMiiMTCF8L4ExtZ1199rNJMdeMcFyPziLf4LmK';
@@ -33,7 +39,7 @@ abstract class Base_TestCase extends \WP_UnitTestCase {
 		}
 	}
 	
-	public function verify_post_meta( $order_id, $fields ) {
+	protected function verify_post_meta( $order_id, $fields ) {
 		
 		foreach( $fields as $field => $value ) {
 			$saved_values = get_post_meta( $order_id, $field );
@@ -43,4 +49,121 @@ abstract class Base_TestCase extends \WP_UnitTestCase {
 		}
 	}
 
+	private $product;
+	
+	protected function create_order( $data ) {
+		
+		if ( empty( $this->product ) ) {
+			$this->product = $this->create_product(); // id 3
+		}
+		
+		$order = wc_create_order( $data );
+		$order->add_product( $this->product, 3 );
+		
+		// create a single sample product, it will probably use post id #3
+		// #1 & #2 possibly reserved for minimal default pages.
+
+
+		$order->calculate_totals();
+		
+		$address = array(
+			'first_name' => 'Remi',
+			'last_name'  => 'Corson',
+			'company'    => 'Automattic',
+			'email'      => 'no@spam.com',
+			'phone'      => '123-123-123',
+			'address_1'  => '123 Main Woo st.',
+			'address_2'  => '100',
+			'city'       => 'San Francisco',
+			'state'      => 'Ca',
+			'postcode'   => '92121',
+			'country'    => 'US',
+		);
+		$order->set_address( $address, 'billing' );
+		$order->set_address( $address, 'shipping' );
+		
+		$payment_method = $data['payment_method'];
+		
+		/**
+		 * We could use here the real gateway, it would be a more thourough test but also more complex
+		 * to setup because $order->save() below would result in executing GW_Checkout->wc_new_order()
+		 * and setting the post meta fields, among other actions.
+		 *
+		 * tentative implementation:
+		 *
+		 * $payment_gateways = WC()->payment_gateways->payment_gateways();
+		 * $gateway = $payment_gateways[ $payment_method ];
+		 * if ( $payment_method == 'decred' ) {
+		 *    $gateway->settings['master_public_key'] = self::TEST_MPK;
+		 * }
+		 * $order->set_payment_method( $gateway );
+		 */
+		
+		$order->set_payment_method( new Dummy_Gateway( $payment_method ) );
+		
+		$order->save();
+		
+		$order_id = $order->get_id();
+		
+		if ( $payment_method == 'decred' ) {
+			update_post_meta( $order_id, 'decred_amount', $data['decred_amount'] );
+			update_post_meta( $order_id, 'decred_payment_address', $data['decred_payment_address'] );
+		}
+		if ( isset( $data['txid'] ) ) {
+			add_post_meta( $order_id, 'txid', $data['txid'] );
+		}
+		
+		return $order;
+	}
+	
+	private function create_product() {
+		
+		$data = array(
+			'Name'        => 'Product A',
+			'Description' => 'This is a product A',
+			'SKU'         => '10020030A',
+		);
+		
+		$user_id = get_current_user();
+		
+		$post_id = wp_insert_post(
+			array(
+				'post_author'  => $user_id,
+				'post_title'   => $data['Name'],
+				'post_content' => $data['Description'],
+				'post_status'  => 'publish',
+				'post_type'    => 'product',
+			)
+			);
+		
+		wp_set_object_terms( $post_id, 'simple', 'product_type' );
+		update_post_meta( $post_id, '_visibility', 'visible' );
+		update_post_meta( $post_id, '_stock_status', 'instock' );
+		update_post_meta( $post_id, 'total_sales', '0' );
+		update_post_meta( $post_id, '_downloadable', 'no' );
+		update_post_meta( $post_id, '_virtual', 'yes' );
+		update_post_meta( $post_id, '_regular_price', '' );
+		update_post_meta( $post_id, '_sale_price', '' );
+		update_post_meta( $post_id, '_purchase_note', '' );
+		update_post_meta( $post_id, '_featured', 'no' );
+		update_post_meta( $post_id, '_weight', '' );
+		update_post_meta( $post_id, '_length', '' );
+		update_post_meta( $post_id, '_width', '' );
+		update_post_meta( $post_id, '_height', '' );
+		update_post_meta( $post_id, '_sku', $data['SKU'] );
+		update_post_meta( $post_id, '_product_attributes', array() );
+		update_post_meta( $post_id, '_sale_price_dates_from', '' );
+		update_post_meta( $post_id, '_sale_price_dates_to', '' );
+		update_post_meta( $post_id, '_price', '' );
+		update_post_meta( $post_id, '_sold_individually', '' );
+		update_post_meta( $post_id, '_manage_stock', 'no' );
+		update_post_meta( $post_id, '_backorders', 'no' );
+		update_post_meta( $post_id, '_stock', '' );
+		
+		$product = wc_get_product( $post_id );
+		$product->set_price( 55 );
+		
+		return $product;
+	}
+	
 }

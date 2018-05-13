@@ -25,10 +25,4 @@ class Constant {
 	const JS_PATH_MAIN = '/assets/decred.js';
 
 	const CRON_INTERVAL = 60;
-
-	/*
-	 * TODO JS features pending
-	 *
-	 * const JS_PATHS = array( '/assets/require.js', '/assets/decred-method.js' );
-	 */
 }

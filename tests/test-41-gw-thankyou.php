@@ -14,13 +14,16 @@ class GW_Thankyou extends Gateway_TestCase {
 
 	public function test_amount_and_address() {
 
-		$g = $this->gateway;
+		$data = [
+			'customer_id'    => 1,
+			'status'         => 'wc-pending',
+			'payment_method' => 'decred',
+			'decred_amount'  => 234.5677777,
+			'decred_payment_address' => 'FAKEFAKEFAKE' 
+		];
+		$order = $this->create_order( $data );
 
-		$order_id = 123;
-		add_post_meta( $order_id, 'decred_amount', 234.5677777 );
-		add_post_meta( $order_id, 'decred_payment_address', 'FAKEFAKEFAKE' );
-
-		$html = $this->get_html( 'thankyou_page', $order_id );
+		$html = $this->get_html( 'thankyou_page', $order->get_id() );
 
 		$txt = preg_replace( '/\s*/m', '', strip_tags( $html ) );
 		$this->assertRegExp( '/.*amounttosend:234.5677777&nbsp;DCR.*/', $txt );
