@@ -22,7 +22,7 @@ class Constant {
 	const STYLES_PATH = '/assets/styles.css';
 
 	const JS_PATH_QRCODE = '/assets/qrcode.min.js';
-	const JS_PATH_MAIN = '/assets/decred.js';
+	const JS_PATH_MAIN   = '/assets/decred.js';
 
 	const CRON_INTERVAL = 60;
 }

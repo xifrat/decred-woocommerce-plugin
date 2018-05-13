@@ -108,7 +108,7 @@ class GW_Base extends \WC_Payment_Gateway {
 	 */
 	public function wp_enqueue_assets() {
 
-		wp_enqueue_style( 'decred-styles', 	plugins_url( $this->plugin->name . Constant::STYLES_PATH ) );
+		wp_enqueue_style( 'decred-styles', plugins_url( $this->plugin->name . Constant::STYLES_PATH ) );
 
 	}
 

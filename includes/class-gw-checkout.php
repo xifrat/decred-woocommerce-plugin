@@ -46,7 +46,7 @@ class GW_Checkout extends GW_Base {
 	 */
 	public function convert_to_dcr( $currency, $amount ) {
 		$dcr_amount = \Decred\Rate\CoinMarketCap::getRate( $currency )->convertToCrypto( $amount );
-		// API may return more precision but we only use 7 decimal digits
+		// API may return more precision but we only use 7 decimal digits.
 		$dcr_amount = round( $dcr_amount, 7 );
 		return $dcr_amount;
 	}
@@ -284,8 +284,8 @@ class GW_Checkout extends GW_Base {
 	 * @param int $order_id .
 	 * @return array
 	 */
-	public function process_payment( $order_id ) { // TODO TEST (may be difficult)
-
+	public function process_payment( $order_id ) {
+		// TODO TEST (may be difficult).
 		$order = wc_get_order( $order_id );
 
 		if ( $order->get_total() == 0 ) {

@@ -1,7 +1,7 @@
 <?php
 /**
  * Intermediary class for the Decred PHP API (decred-php-api)
- * 
+ *
  * TODO if performance hit turns out to be significant consider caching the extended key object and
  * resetting it if the master key changed in admin. Currently re-created every time a DCR order is placed.
  */
