@@ -109,8 +109,8 @@ abstract class Base_TestCase extends \WP_UnitTestCase {
 			update_post_meta( $order_id, 'decred_amount', $data['decred_amount'] );
 			update_post_meta( $order_id, 'decred_payment_address', $data['decred_payment_address'] );
 		}
-		if ( isset( $data['txid'] ) ) {
-			add_post_meta( $order_id, 'txid', $data['txid'] );
+		if ( isset( $data['decred_txid'] ) ) {
+			add_post_meta( $order_id, 'decred_txid', $data['decred_txid'] );
 		}
 		
 		return $order;

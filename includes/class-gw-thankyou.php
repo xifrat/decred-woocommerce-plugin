@@ -42,7 +42,7 @@ class GW_Thankyou extends GW_Checkout {
 		$dcr_order_status 		= $order->get_status();
 		$dcr_payment_address 	= get_post_meta( $order_id, 'decred_payment_address', true );
 		$dcr_amount 			= get_post_meta( $order_id, 'decred_amount', true );
-		$dcr_txid 				= get_post_meta( $order_id, 'txid', true );
+		$dcr_txid 				= get_post_meta( $order_id, 'decred_txid', true );
 
 		$dcr_code = sprintf('decred:%s?%s', $dcr_payment_address, http_build_query([
 			'amount' => $dcr_amount,

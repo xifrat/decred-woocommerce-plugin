@@ -105,10 +105,10 @@ class Status_Updater {
 		 * Transaction ID: save or verify if already saved
 		 */
 		$trans_txid = $transaction->getTxid();
-		$order_txid = get_post_meta( $order_id, 'txid', true );
+		$order_txid = get_post_meta( $order_id, 'decred_txid', true );
 
 		if ( empty( $order_txid ) ) {
-			update_post_meta( $order_id, 'txid', $trans_txid );
+			update_post_meta( $order_id, 'decred_txid', $trans_txid );
 		} elseif ( $trans_txid != $order_txid ) {
 			// TODO maybe throw exception.
 			$this->log( "INTERNAL ERROR: Transaction ID $trans_txid differs from saved previously $order_txid for order id $order_id" );

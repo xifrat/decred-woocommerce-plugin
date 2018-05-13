@@ -201,7 +201,7 @@ class Plugin {
 
 			if ( $order->get_user_id() === $user->ID ) {
 				$result['status'] = $order->get_status();
-				$result['txid'] = get_post_meta( $order->get_id(), 'txid', true );
+				$result['txid'] = get_post_meta( $order->get_id(), 'decred_txid', true );
 			}
 		}
 

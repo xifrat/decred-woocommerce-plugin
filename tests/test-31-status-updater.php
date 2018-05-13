@@ -134,7 +134,7 @@ class StatusUpdater extends Base_TestCase {
 
 		$fields = [
 			'decred_confirmations' => $current_confirms,
-			'txid' => '899da82798f05e8ee6d28ee83b1f12932558263fd736993d2b165b3b842a47ca'
+			'decred_txid' => '899da82798f05e8ee6d28ee83b1f12932558263fd736993d2b165b3b842a47ca'
 		];
 		$this->verify_post_meta( 6, $fields );
 
